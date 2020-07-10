@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 
 public class ObjectPlacement : MonoBehaviour
@@ -15,76 +14,98 @@ public class ObjectPlacement : MonoBehaviour
     [SerializeField] private GameObject keyContextMenuPref;
 
     private EditorRaycaster raycaster;
-    private bool point1select;
-    private GameObject point1;
+    private ObjectSelector selector;
+    private IDisposable routine;
     #endregion
 
     private void Awake()
     {
         raycaster = GetComponent<EditorRaycaster>();
+        selector = GetComponent<ObjectSelector>();
 
         LevelInitializer.StartAddObjEvent.AddListener(() =>
         {
-            StopAllCoroutines();
-            ResetFlags();
+            if (routine != null)
+                routine.Dispose();
         });
     }
 
-    private void ResetFlags()
-    {
-        point1select = false;
-    }
-
-    public void PlaceStone()
+    public void PlaceObject(int objectType)
     {
         LevelInitializer.StartAddObjEvent.Invoke();
-        StartCoroutine(PlaceObjectRoutine(stoneIndicatorPref, NodeType.Stone));
-    }
 
-    public void PlaceMine()
-    {
-        LevelInitializer.StartAddObjEvent.Invoke();
-        StartCoroutine(PlaceObjectRoutine(mineIndicatorPref, NodeType.Mine));
-    }
-
-    public void PlaceKey()
-    {
-        LevelInitializer.StartAddObjEvent.Invoke();
-        StartCoroutine(PlaceObjectRoutine(keyIndicatorPref, NodeType.Key));
-    }
-
-    public void PlaceMap()
-    {
-        LevelInitializer.StartAddObjEvent.Invoke();
-        StartCoroutine(PlaceObjectRoutine(mapIndicatorPref, NodeType.Map));
-    }
-
-    public void PlaceCutter()
-    {
-        LevelInitializer.StartAddObjEvent.Invoke();
-        StartCoroutine(PlaceObjectRoutine(cutterIndicatorPref, NodeType.Cutter));
-    }
-
-    private IEnumerator PlaceObjectRoutine(GameObject objIndicatorPref, NodeType type)
-    {
-        Debug.Log("Select point");
-        while (!point1select)
-        {
-            if (raycaster.CheckRaycast(1024, "Node", out point1))
+        routine = Observable
+            .FromCoroutine(() => selector.SelectNodeRoutine("Select node to place object"))
+            .Subscribe(_ =>
             {
-                var indicator = Instantiate(objIndicatorPref, point1.transform);
-                GameObject contextMenu = null;
+                PlaceObject((NodeType)objectType, selector.Nodes[0].transform);
+                selector.Reset();
+                LevelInitializer.EndAddObjEvent?.Invoke();
+            });
+    }
 
-                if (type == NodeType.Key) contextMenu = Instantiate(keyContextMenuPref, point1.transform);
-                else contextMenu = Instantiate(contextMenuPref, point1.transform);
-
-                contextMenu.GetComponent<ContextMenu_Obj>().Initialize(indicator);
-                point1.GetComponent<Board_Node>().Type = type;
-                point1select = true;
-            }
-            yield return null;
+    public void PlaceObject(NodeType type, Transform parent)
+    {
+        var indicator = GetIndicator(type, parent);
+        if (indicator == null)
+        {
+            Debug.LogWarning("Indicator pref is lost");
+            return;
         }
-        LevelInitializer.EndAddObjEvent?.Invoke();
-        ResetFlags();
+
+        GameObject contextMenu = null;
+
+        if (type == NodeType.Key) contextMenu = Instantiate(keyContextMenuPref, parent);
+        else contextMenu = Instantiate(contextMenuPref, parent);
+
+        contextMenu.GetComponent<ContextMenu_Obj>().Initialize(indicator);
+        parent.GetComponent<Board_Node>().Type = type;
+    }
+
+    private GameObject GetIndicator(NodeType type, Transform _parent)
+    {
+        switch (type)
+        {
+            case NodeType.Mine:
+                 return Instantiate(mineIndicatorPref, _parent);
+            case NodeType.Stone:
+                return Instantiate(stoneIndicatorPref, _parent);
+            case NodeType.Cutter:
+                return Instantiate(cutterIndicatorPref, _parent);
+            case NodeType.Key:
+                return Instantiate(keyIndicatorPref, _parent);
+            case NodeType.Map:
+                return Instantiate(mineIndicatorPref, _parent);
+        }
+        return null;
+    }
+
+    public void DeleteObject(Board_Node node)
+    {
+        var indicator = FindObjectIndicator(node.transform);
+        if (indicator != null) Destroy(indicator);
+
+        for (int i = 0; i < node.transform.childCount; i++)
+        {
+            var child = node.transform.GetChild(i);
+            if (child.GetComponent<ContextMenu>())
+                Destroy(child.gameObject);
+        }
+
+        if (node.Type == NodeType.Key) node.GetComponent<KeyIndex>().Index = 0;
+        node.Type = NodeType.Default;
+    }
+
+    private GameObject FindObjectIndicator(Transform target)
+    {
+        for (int i = 0; i < target.childCount; i++)
+        {
+            if (target.GetChild(i).CompareTag("Indicator"))
+            {
+                var indicator = target.GetChild(i).gameObject;
+                return indicator;
+            }
+        }
+        return null;
     }
 }

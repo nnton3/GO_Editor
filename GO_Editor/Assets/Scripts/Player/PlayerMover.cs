@@ -28,14 +28,14 @@ public class PlayerMover : Mover
         yield return base.MoveRoutine(destinationPos, delayTime);
         UpdateBoard();
 
+        base.FinishMovementEvent.Invoke();
+
         var door = currentNode.GetComponent<Opener>();
         if (door != null)
         {
             door.TryToOpen();
             yield return new WaitForSeconds(1f);
         }
-
-        base.FinishMovementEvent.Invoke();
     }
 
     public void Reset()

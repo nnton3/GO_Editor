@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Linq;
-using UnityEditor;
 using System.IO;
 using System;
 
@@ -10,26 +9,24 @@ public class SavingSystem : MonoBehaviour
     #region Variables
     private Board board;
     private ObstaclePlacement obstaclePlacement;
+    private ObjectPlacement objectPlacement;
     private EnemyPlacement enemyPlacement;
     private LevelInitializer levelInitializer;
     private JsonLevelData levelData = new JsonLevelData();
 
+    [Header("PRINT CONFIG PATH")]
     [SerializeField] public string ConfigPath;
     //[Header("DRAG'n'DROP LEVEL DATA IN THIS FIELD")]
     //[SerializeField] private LevelData levelData;
-    [Header("Indicator prefs")]
-    [SerializeField] private GameObject mineIndicator;
-    [SerializeField] private GameObject stoneIndicator;
-    [SerializeField] private GameObject cutterIndicator;
-    [SerializeField] private GameObject keyIndicator;
-    [SerializeField] private GameObject mapIndicator;
-    [SerializeField] private GameObject leverIndicator;
     #endregion
 
     public void Initialize()
     {
         obstaclePlacement = GetComponent<ObstaclePlacement>();
         if (obstaclePlacement == null) Debug.LogWarning("Obstacle placement is lost!");
+
+        objectPlacement = GetComponent<ObjectPlacement>();
+        if (objectPlacement == null) Debug.LogWarning("Object placement is lost");
 
         enemyPlacement = GetComponent<EnemyPlacement>();
         if (enemyPlacement == null) Debug.LogWarning("Enemy placement is lost!");
@@ -161,8 +158,18 @@ public class SavingSystem : MonoBehaviour
     private void ClearMap()
     {
         DeleteObstacles();
+        DeleteObjects();
         DeleteEnemies();
         DeleteLinks();
+    }
+
+    private void DeleteObjects()
+    {
+        foreach (var node in board.AllNodes)
+        {
+            if (node.Type != NodeType.Default)
+                objectPlacement.DeleteObject(node);
+        }
     }
 
     private void DeleteLinks()
@@ -294,7 +301,6 @@ public class SavingSystem : MonoBehaviour
 
     private void LoadBushes()
     {
-        //Debug.Log($"U have {levelData.bushes.Count} bushes");
         foreach (var target in levelData.bushes)
             obstaclePlacement.PlaceBush(board.FindNodeAt(target.pos));
     }
@@ -377,50 +383,8 @@ public class SavingSystem : MonoBehaviour
             var node = board.FindNodeAt(target.position);
             if (node == null) continue;
 
-            node.Type = target.type;
-            if (FindObjectIndicator(node.transform) == null)
-                AddIndicator(node.transform, node.Type);
+            objectPlacement.PlaceObject(target.type, node.transform);
         }
-    }
-
-    private void AddIndicator(Transform transform, NodeType type)
-    {
-        switch (type)
-        {
-            case NodeType.Mine:
-                Instantiate(mineIndicator, transform);
-                break;
-            case NodeType.Stone:
-                Instantiate(stoneIndicator, transform);
-                break;
-            case NodeType.Cutter:
-                Instantiate(cutterIndicator, transform);
-                break;
-            case NodeType.Key:
-                Instantiate(keyIndicator, transform);
-                break;
-            case NodeType.Map:
-                Instantiate(mineIndicator, transform);
-                break;
-            case NodeType.Lever:
-                Instantiate(leverIndicator, transform);
-                break;
-            default:
-                break;
-        }
-    }
-
-    private GameObject FindObjectIndicator(Transform target)
-    {
-        for (int i = 0; i < target.childCount; i++)
-        {
-            if (target.GetChild(i).CompareTag("Indicator"))
-            {
-                var indicator = target.GetChild(i).gameObject;
-                return indicator;
-            }
-        }
-        return null;
     }
 
     private void LoadEnemies()
