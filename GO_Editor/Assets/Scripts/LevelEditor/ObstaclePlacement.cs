@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEngine.Events;
-using System;
 using System.Collections.Generic;
+using System;
+using UniRx;
 
 public class ObstaclePlacement : MonoBehaviour
 {
@@ -16,6 +16,8 @@ public class ObstaclePlacement : MonoBehaviour
     [SerializeField] private GameObject barbedWireContextMenuPref;
 
     private EditorRaycaster raycaster;
+    private ObjectSelector selector;
+    private IDisposable routine;
     private bool point1select;
     private bool point2select;
 
@@ -28,11 +30,12 @@ public class ObstaclePlacement : MonoBehaviour
     private void Awake()
     {
         raycaster = GetComponent<EditorRaycaster>();
+        selector = GetComponent<ObjectSelector>();
 
-        LevelInitializer.StartAddObjEvent.AddListener(() =>
+        LevelInitializer.EndAddObjEvent.AddListener(() =>
         {
-            StopAllCoroutines();
-            ResetFlags();
+            if (routine != null)
+                routine.Dispose();
         });
     }
 
@@ -116,16 +119,17 @@ public class ObstaclePlacement : MonoBehaviour
     public void AddDoor()
     {
         LevelInitializer.StartAddObjEvent?.Invoke();
-        StartCoroutine(PlaceDoorRoutine(doorContextMenuPref));
-    }
 
-    private IEnumerator PlaceDoorRoutine(GameObject contextMenuPref)
-    {
-        yield return SelectTwoPointRoutine();
-        PlaceObstacle(point1, point2, contextMenuPref);
-        InitDoor(point1, point2, point1.GetComponent<DynamicObstacle>());
-        LevelInitializer.EndAddObjEvent?.Invoke();
-        ResetFlags();
+        routine = Observable
+            .FromCoroutine(() => selector.SelectNodeRoutine("Select point 1"))
+            .SelectMany(() => selector.SelectNodeRoutine("Select point 2"))
+            .Subscribe(_ =>
+            {
+                PlaceObstacle(selector.Nodes[0], selector.Nodes[1], doorContextMenuPref);
+                InitDoor(selector.Nodes[0], selector.Nodes[1], selector.Nodes[0].GetComponent<DynamicObstacle>());
+                selector.Reset();
+                LevelInitializer.EndAddObjEvent?.Invoke();
+            });
     }
 
     public void PlaceDoor(GameObject _point1, GameObject _point2)
@@ -198,22 +202,14 @@ public class ObstaclePlacement : MonoBehaviour
     public void AddBush()
     {
         LevelInitializer.StartAddObjEvent?.Invoke();
-        StartCoroutine(AddBushRoutine());
-    }
 
-    private IEnumerator AddBushRoutine()
-    {
-        while (!point1select)
-        {
-            if (raycaster.CheckRaycast(1024, "Node", out point1))
-                point1select = true;
-
-            yield return null;
-        }
-
-        PlaceBush(point1.GetComponent<Board_Node>());
-        LevelInitializer.EndAddObjEvent?.Invoke();
-        ResetFlags();
+        routine = Observable
+            .FromCoroutine(() => selector.SelectNodeRoutine("Select node to place bush"))
+            .Subscribe(_ =>
+            {
+                PlaceBush(selector.Nodes[0].GetComponent<Board_Node>());
+                selector.Reset();
+            });
     }
 
     public void PlaceBush(Board_Node node)
@@ -227,18 +223,19 @@ public class ObstaclePlacement : MonoBehaviour
     public void AddSpotlight()
     {
         LevelInitializer.StartAddObjEvent?.Invoke();
-        StartCoroutine(PlaceSpotlightRoutine());
+
+        routine = Observable
+            .FromCoroutine(() => selector.SelectNodeRoutine("Select start point"))
+            .SelectMany(() => selector.SelectNodeRoutine("Select end point"))
+            .Subscribe(_ =>
+            {
+                PlaceSpotlight(selector.Nodes[0], selector.Nodes[1]);
+                selector.Reset();
+                LevelInitializer.EndAddObjEvent?.Invoke();
+            });
     }
 
-    private IEnumerator PlaceSpotlightRoutine()
-    {
-        yield return SelectTwoPointRoutine();
-        PlaceSpotlight();
-        LevelInitializer.EndAddObjEvent?.Invoke();
-        ResetFlags();
-    }
-
-    private void PlaceSpotlight()
+    private void PlaceSpotlight(GameObject point1, GameObject point2)
     {
         var spotlightInstance = Instantiate(spotlightPref, point1.transform.position, Quaternion.identity);
         spotlightPref.GetComponent<SpotlightMover>().SetMovementParams(point1.transform.position, point2.transform.position);
