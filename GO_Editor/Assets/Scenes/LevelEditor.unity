@@ -204,12 +204,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1314746447}
-        m_MethodName: PlaceKey
-        m_Mode: 1
+        m_MethodName: PlaceObject
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 6
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -2215,12 +2215,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1314746447}
-        m_MethodName: PlaceMine
-        m_Mode: 1
+        m_MethodName: PlaceObject
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 2
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -3366,12 +3366,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1314746447}
-        m_MethodName: PlaceStone
-        m_Mode: 1
+        m_MethodName: PlaceObject
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 3
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -4329,6 +4329,7 @@ GameObject:
   - component: {fileID: 1314746448}
   - component: {fileID: 1314746449}
   - component: {fileID: 1314746450}
+  - component: {fileID: 1314746451}
   m_Layer: 0
   m_Name: EditorComponents
   m_TagString: Untagged
@@ -4497,18 +4498,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ConfigPath: D:\JsonConfigs\TestAlarm.json
-  mineIndicator: {fileID: 3176904756966354914, guid: 5ac336b85dda2c441bfce421dfa5630a,
-    type: 3}
-  stoneIndicator: {fileID: 467907461589448455, guid: fb4e2b0bd445b1e43a0d7d180fc948e6,
-    type: 3}
-  cutterIndicator: {fileID: 7501929555309828208, guid: 9a9068cf50ca2fc45b3b80fa32c2ae33,
-    type: 3}
-  keyIndicator: {fileID: 2599343123478712430, guid: 121affcf80b082f4c8da90da70b49e64,
-    type: 3}
-  mapIndicator: {fileID: 3277988512852671053, guid: 81f3b1ace1b63e247836e61085aa70d2,
-    type: 3}
-  leverIndicator: {fileID: 4391038576230781395, guid: 3f25877ec655c774e8ace8d1232d5184,
-    type: 3}
+--- !u!114 &1314746451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1314746441}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 850eba3f19ebb7842b84160d492945dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1323613915
 GameObject:
   m_ObjectHideFlags: 0
@@ -5078,12 +5079,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1314746447}
-        m_MethodName: PlaceMap
-        m_Mode: 1
+        m_MethodName: PlaceObject
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 7
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -6798,12 +6799,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1314746447}
-        m_MethodName: PlaceCutter
-        m_Mode: 1
+        m_MethodName: PlaceObject
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 5
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
