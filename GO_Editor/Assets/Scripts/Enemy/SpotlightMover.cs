@@ -4,7 +4,9 @@ using UnityEngine;
 public class SpotlightMover : EnemieMover
 {
     [SerializeField] private Vector3 startPoint;
+    public Vector3 StartPoint => startPoint;
     [SerializeField] private Vector3 endPoint;
+    public Vector3 EndPoint => endPoint;
 
     public override void ToAlarmState(Board_Node node) { return; }
 

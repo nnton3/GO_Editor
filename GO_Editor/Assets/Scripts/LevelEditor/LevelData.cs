@@ -123,6 +123,7 @@ public struct NodeData
     }
 }
 
+[System.Serializable]
 public struct BushData
 {
     public Vector3 pos;
@@ -130,5 +131,20 @@ public struct BushData
     public BushData(Vector3 _pos)
     {
         pos = _pos;
+    }
+}
+
+[System.Serializable]
+public struct SpotlightData
+{
+    public Vector3 startPos;
+    public Vector3 endPos;
+    public Quaternion rotation;
+
+    public SpotlightData(Vector3 _startPos, Vector3 _endPos, Quaternion _rotation)
+    {
+        startPos = _startPos;
+        endPos = _endPos;
+        rotation = _rotation;
     }
 }

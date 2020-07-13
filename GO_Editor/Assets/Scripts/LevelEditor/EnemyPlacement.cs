@@ -97,17 +97,20 @@ public class EnemyPlacement : MonoBehaviour
 
     public void AddEnemyOfficer(Vector3 startPos, List<Vector3> waypoints, PatrolData patrolData, Quaternion rotation)
     {
-        InstanceOfficer(startPos, waypoints, patrolData);
+        var instance = InstanceOfficer(startPos, waypoints, patrolData);
+        if (instance != null) instance.transform.rotation = rotation;
     }
 
-    private void InstanceOfficer(Vector3 startPos, List<Vector3> waypoints, PatrolData patrolData)
+    private GameObject InstanceOfficer(Vector3 startPos, List<Vector3> waypoints, PatrolData patrolData)
     {
         if (InputParamsValid(startPos, waypoints, patrolData))
         {
             var officer = Instantiate(enemyOfficerPref, startPos, Quaternion.identity);
             officer.GetComponent<EnemyManager>().Initialize();
             officer.GetComponent<EnemyMover_Officer>().SetPatrolParams(waypoints, patrolData);
+            return officer;
         }
+        return null;
     }
 
     private bool InputParamsValid(Vector3 startPos, List<Vector3> waypoints, PatrolData patrolData)

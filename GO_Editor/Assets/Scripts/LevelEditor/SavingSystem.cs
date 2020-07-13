@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 using System.IO;
+using System;
 
 public class SavingSystem : MonoBehaviour
 {
@@ -82,6 +83,17 @@ public class SavingSystem : MonoBehaviour
         SaveDoors();
         SaveBarbedWires();
         SaveBushes();
+        SaveSpotlight();
+    }
+
+    private void SaveSpotlight()
+    {
+        levelData.spotlights.Clear();
+        foreach (var spotlight in FindObjectsOfType<SpotlightMover>())
+            levelData.spotlights.Add(new SpotlightData(
+                spotlight.StartPoint,
+                spotlight.EndPoint, 
+                spotlight.transform.rotation));
     }
 
     private void SaveBushes()
@@ -210,6 +222,13 @@ public class SavingSystem : MonoBehaviour
         DeleteDoors();
         DeleteBarriers();
         DeleteBushes();
+        DeleteSpotlights();
+    }
+
+    private void DeleteSpotlights()
+    {
+        foreach (var spotlight in FindObjectsOfType<SpotlightManager>())
+            Destroy(spotlight.gameObject);
     }
 
     private void DeleteBushes()
@@ -301,6 +320,16 @@ public class SavingSystem : MonoBehaviour
         LoadDoors();
         LoadBarbedWires();
         LoadBushes();
+        LoadSpotlights();
+    }
+
+    private void LoadSpotlights()
+    {
+        foreach (var target in levelData.spotlights)
+            obstaclePlacement.PlaceSpotlight(
+                board.FindNodeAt(target.startPos).gameObject,
+                board.FindNodeAt(target.endPos).gameObject, 
+                target.rotation);
     }
 
     private void LoadBushes()
@@ -425,16 +454,17 @@ public class SavingSystem : MonoBehaviour
                     targetEnemy.transform.rotation = target.rotation;
             }
         }
-        Debug.Log($"We load {levelData.officers.Count} officers");
+        
         foreach (var target in levelData.officers)
         {
             var node = board.FindNodeAt(target.position);
             var enemy = board.FindEnemiesAt(node);
             if (enemy.Count == 0)
             {
-                var enemies = board.FindEnemiesAt(board.FindNodeAt(target.checkPosition));
-                var checkedEnemy = enemies.Find(e => e.Identifier == EnemyIdentifier.Spinner);
-                Debug.Log(target.checkPosition);
+                var enemies = FindObjectsOfType<EnemyMover_Spinner>();
+                var enemyList = enemies.ToList();
+                var checkedEnemy = enemyList.Find(e => e.transform.position == target.checkPosition);
+                Debug.Log(target.rotation.eulerAngles);
                 enemyPlacement.AddEnemyOfficer(
                     target.position,
                     target.patrolPath,
