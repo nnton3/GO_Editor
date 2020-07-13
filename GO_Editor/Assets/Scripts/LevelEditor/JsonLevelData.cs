@@ -11,6 +11,7 @@ class JsonLevelData
     public List<DoorData> doors = new List<DoorData>();
     public List<BarrierData> barriers = new List<BarrierData>();
     public List<EnemyData> enemies = new List<EnemyData>();
+    public List<OfficerData> officers = new List<OfficerData>();
     public PlayerData player = new PlayerData();
     public List<NodeData> nodes = new List<NodeData>();
     public List<BushData> bushes = new List<BushData>();

@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Linq;
 using System.IO;
-using System;
 
 public class SavingSystem : MonoBehaviour
 {
@@ -16,8 +15,6 @@ public class SavingSystem : MonoBehaviour
 
     [Header("PRINT CONFIG PATH")]
     [SerializeField] public string ConfigPath;
-    //[Header("DRAG'n'DROP LEVEL DATA IN THIS FIELD")]
-    //[SerializeField] private LevelData levelData;
     #endregion
 
     public void Initialize()
@@ -143,13 +140,20 @@ public class SavingSystem : MonoBehaviour
     private void SaveEnemies()
     {
         levelData.enemies.Clear();
+        levelData.officers.Clear();
         foreach (var enemy in FindObjectsOfType<EnemyManager>())
         {
-            if (enemy.GetComponent<EnemyMover_Officer>()) continue;
-            levelData.enemies.Add(new EnemyData(
-                enemy.Identifier,
-                enemy.transform.position, 
-                enemy.transform.rotation));
+            if (enemy.GetComponent<EnemyMover_Officer>())
+                levelData.officers.Add(new OfficerData(
+                    enemy.transform.position,
+                    enemy.transform.rotation,
+                    enemy.GetComponent<EnemyMover_Officer>().Waypoints,
+                    enemy.GetComponent<EnemyMover_Officer>().PatrolDataValue.Position));
+            else
+                levelData.enemies.Add(new EnemyData(
+                    enemy.Identifier,
+                    enemy.transform.position, 
+                    enemy.transform.rotation));
         }
     }
     #endregion
@@ -397,19 +401,19 @@ public class SavingSystem : MonoBehaviour
                 switch (target.identifier)
                 {
                     case EnemyIdentifier.Spinner:
-                        enemyPlacement.AddEnemySpinner(target.position, target.rotation);
+                        enemyPlacement.AddEnemy(1, target.position, target.rotation);
                         break;
                     case EnemyIdentifier.Patrol:
-                        enemyPlacement.AddEnemyPatrol(target.position, target.rotation);
+                        enemyPlacement.AddEnemy(2, target.position, target.rotation);
                         break;
                     case EnemyIdentifier.Sniper:
-                        enemyPlacement.AddEnemySniper(target.position, target.rotation);
+                        enemyPlacement.AddEnemy(3, target.position, target.rotation);
                         break;
                     case EnemyIdentifier.Kinologist:
-                        //enemyPlacement.AddEnemyKinologist(target.position, target.rotation);
+                        enemyPlacement.AddEnemy(5, target.position, target.rotation);
                         break;
                     case EnemyIdentifier.Liquidator:
-                        enemyPlacement.AddLiquidator(target.position, target.rotation);
+                        enemyPlacement.AddEnemy(6, target.position, target.rotation);
                         break;
                     default:
                         break;
@@ -417,6 +421,29 @@ public class SavingSystem : MonoBehaviour
             else
             {
                 var targetEnemy = enemy.Find(e => e.Identifier == target.identifier);
+                if (targetEnemy != null)
+                    targetEnemy.transform.rotation = target.rotation;
+            }
+        }
+        Debug.Log($"We load {levelData.officers.Count} officers");
+        foreach (var target in levelData.officers)
+        {
+            var node = board.FindNodeAt(target.position);
+            var enemy = board.FindEnemiesAt(node);
+            if (enemy.Count == 0)
+            {
+                var enemies = board.FindEnemiesAt(board.FindNodeAt(target.checkPosition));
+                var checkedEnemy = enemies.Find(e => e.Identifier == EnemyIdentifier.Spinner);
+                Debug.Log(target.checkPosition);
+                enemyPlacement.AddEnemyOfficer(
+                    target.position,
+                    target.patrolPath,
+                    new PatrolData(target.checkPosition, checkedEnemy?.gameObject),
+                    target.rotation);
+            }
+            else
+            {
+                var targetEnemy = enemy.Find(e => e.Identifier == EnemyIdentifier.Officer);
                 if (targetEnemy != null)
                     targetEnemy.transform.rotation = target.rotation;
             }

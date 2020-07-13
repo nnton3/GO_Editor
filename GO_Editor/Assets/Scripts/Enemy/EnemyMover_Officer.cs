@@ -19,7 +19,9 @@ public class EnemyMover_Officer : EnemieMover
 {
     [SerializeField] private bool loop;
     [SerializeField] private List<Vector3> waypoints;
+    public List<Vector3> Waypoints => waypoints;
     [SerializeField] private PatrolData checkPatrol;
+    public PatrolData PatrolDataValue => checkPatrol;
     private int currentTargetWaypoint = 1;
 
     public override void MoveOneTurn()

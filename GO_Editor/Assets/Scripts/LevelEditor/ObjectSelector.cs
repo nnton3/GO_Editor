@@ -8,6 +8,8 @@ public class ObjectSelector : MonoBehaviour
     public List<GameObject> Nodes => nodes;
     private GameObject node1;
     public GameObject Node1 => node1;
+    private GameObject enemy;
+    public GameObject Enemy => enemy;
 
     private bool selected;
     private EditorRaycaster raycaster;
@@ -32,9 +34,25 @@ public class ObjectSelector : MonoBehaviour
         selected = false;
     }
 
+    public IEnumerator SelectEnemyRoutine(string message)
+    {
+        Debug.Log(message);
+        GameObject node = null;
+        while (!selected)
+        {
+            if (raycaster.CheckRaycast(512, "Enemy", out enemy))
+                selected = true;
+
+            yield return null;
+        }
+        nodes.Add(node);
+        selected = false;
+    }
+
     public void Reset()
     {
         if (nodes.Count != 0)
             nodes.Clear();
+        enemy = null;
     }
 }
