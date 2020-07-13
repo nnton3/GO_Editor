@@ -4,7 +4,7 @@ using UnityEngine.Events;
 
 public enum EnemyIdentifier
 {
-    Setry,
+    Setry = 0,
     Spinner,
     Patrol,
     Sniper,

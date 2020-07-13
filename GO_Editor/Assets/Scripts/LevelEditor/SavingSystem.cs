@@ -16,8 +16,6 @@ public class SavingSystem : MonoBehaviour
 
     [Header("PRINT CONFIG PATH")]
     [SerializeField] public string ConfigPath;
-    //[Header("DRAG'n'DROP LEVEL DATA IN THIS FIELD")]
-    //[SerializeField] private LevelData levelData;
     #endregion
 
     public void Initialize()
@@ -85,6 +83,17 @@ public class SavingSystem : MonoBehaviour
         SaveDoors();
         SaveBarbedWires();
         SaveBushes();
+        SaveSpotlight();
+    }
+
+    private void SaveSpotlight()
+    {
+        levelData.spotlights.Clear();
+        foreach (var spotlight in FindObjectsOfType<SpotlightMover>())
+            levelData.spotlights.Add(new SpotlightData(
+                spotlight.StartPoint,
+                spotlight.EndPoint, 
+                spotlight.transform.rotation));
     }
 
     private void SaveBushes()
@@ -143,13 +152,20 @@ public class SavingSystem : MonoBehaviour
     private void SaveEnemies()
     {
         levelData.enemies.Clear();
+        levelData.officers.Clear();
         foreach (var enemy in FindObjectsOfType<EnemyManager>())
         {
-            if (enemy.GetComponent<EnemyMover_Officer>()) continue;
-            levelData.enemies.Add(new EnemyData(
-                enemy.Identifier,
-                enemy.transform.position, 
-                enemy.transform.rotation));
+            if (enemy.GetComponent<EnemyMover_Officer>())
+                levelData.officers.Add(new OfficerData(
+                    enemy.transform.position,
+                    enemy.transform.rotation,
+                    enemy.GetComponent<EnemyMover_Officer>().Waypoints,
+                    enemy.GetComponent<EnemyMover_Officer>().PatrolDataValue.Position));
+            else
+                levelData.enemies.Add(new EnemyData(
+                    enemy.Identifier,
+                    enemy.transform.position, 
+                    enemy.transform.rotation));
         }
     }
     #endregion
@@ -206,6 +222,13 @@ public class SavingSystem : MonoBehaviour
         DeleteDoors();
         DeleteBarriers();
         DeleteBushes();
+        DeleteSpotlights();
+    }
+
+    private void DeleteSpotlights()
+    {
+        foreach (var spotlight in FindObjectsOfType<SpotlightManager>())
+            Destroy(spotlight.gameObject);
     }
 
     private void DeleteBushes()
@@ -297,6 +320,16 @@ public class SavingSystem : MonoBehaviour
         LoadDoors();
         LoadBarbedWires();
         LoadBushes();
+        LoadSpotlights();
+    }
+
+    private void LoadSpotlights()
+    {
+        foreach (var target in levelData.spotlights)
+            obstaclePlacement.PlaceSpotlight(
+                board.FindNodeAt(target.startPos).gameObject,
+                board.FindNodeAt(target.endPos).gameObject, 
+                target.rotation);
     }
 
     private void LoadBushes()
@@ -397,19 +430,19 @@ public class SavingSystem : MonoBehaviour
                 switch (target.identifier)
                 {
                     case EnemyIdentifier.Spinner:
-                        enemyPlacement.AddEnemySpinner(target.position, target.rotation);
+                        enemyPlacement.AddEnemy(1, target.position, target.rotation);
                         break;
                     case EnemyIdentifier.Patrol:
-                        enemyPlacement.AddEnemyPatrol(target.position, target.rotation);
+                        enemyPlacement.AddEnemy(2, target.position, target.rotation);
                         break;
                     case EnemyIdentifier.Sniper:
-                        enemyPlacement.AddEnemySniper(target.position, target.rotation);
+                        enemyPlacement.AddEnemy(3, target.position, target.rotation);
                         break;
                     case EnemyIdentifier.Kinologist:
-                        //enemyPlacement.AddEnemyKinologist(target.position, target.rotation);
+                        enemyPlacement.AddEnemy(5, target.position, target.rotation);
                         break;
                     case EnemyIdentifier.Liquidator:
-                        enemyPlacement.AddLiquidator(target.position, target.rotation);
+                        enemyPlacement.AddEnemy(6, target.position, target.rotation);
                         break;
                     default:
                         break;
@@ -417,6 +450,30 @@ public class SavingSystem : MonoBehaviour
             else
             {
                 var targetEnemy = enemy.Find(e => e.Identifier == target.identifier);
+                if (targetEnemy != null)
+                    targetEnemy.transform.rotation = target.rotation;
+            }
+        }
+        
+        foreach (var target in levelData.officers)
+        {
+            var node = board.FindNodeAt(target.position);
+            var enemy = board.FindEnemiesAt(node);
+            if (enemy.Count == 0)
+            {
+                var enemies = FindObjectsOfType<EnemyMover_Spinner>();
+                var enemyList = enemies.ToList();
+                var checkedEnemy = enemyList.Find(e => e.transform.position == target.checkPosition);
+                Debug.Log(target.rotation.eulerAngles);
+                enemyPlacement.AddEnemyOfficer(
+                    target.position,
+                    target.patrolPath,
+                    new PatrolData(target.checkPosition, checkedEnemy?.gameObject),
+                    target.rotation);
+            }
+            else
+            {
+                var targetEnemy = enemy.Find(e => e.Identifier == EnemyIdentifier.Officer);
                 if (targetEnemy != null)
                     targetEnemy.transform.rotation = target.rotation;
             }

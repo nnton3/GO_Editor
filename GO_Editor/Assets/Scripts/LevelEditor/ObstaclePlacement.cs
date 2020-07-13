@@ -18,13 +18,6 @@ public class ObstaclePlacement : MonoBehaviour
     private EditorRaycaster raycaster;
     private ObjectSelector selector;
     private IDisposable routine;
-    private bool point1select;
-    private bool point2select;
-
-    private bool point3select;
-    private GameObject point1;
-    private GameObject point2;
-    private GameObject point3;
     #endregion
 
     private void Awake()
@@ -39,52 +32,20 @@ public class ObstaclePlacement : MonoBehaviour
         });
     }
 
-    private void ResetFlags()
-    {
-        point1select = false;
-        point2select = false;
-        point3select = false;
-    }
-
     #region Barrier
     public void AddBarrier()
     {
         LevelInitializer.StartAddObjEvent?.Invoke();
-        StartCoroutine(AddBarrierRoutine());
-    }
-
-    private IEnumerator AddBarrierRoutine()
-    {
-        Debug.Log("Select point for lever");
-        while (!point1select)
-        {
-            if (raycaster.CheckRaycast(1024, "Node", out point1))
-                point1select = true;
-
-            yield return null;
-        }
-
-        Debug.Log("Select point one");
-        while (!point2select)
-        {
-            if (raycaster.CheckRaycast(1024, "Node", out point2))
-                point2select = true;
-
-            yield return null;
-        }
-
-        Debug.Log("Select point two");
-        while (!point3select)
-        {
-            if (raycaster.CheckRaycast(1024, "Node", out point3))
-                point3select = true;
-
-            yield return null;
-        }
-
-        CreateBarreir(point1, point2, point3);
-        LevelInitializer.EndAddObjEvent?.Invoke();
-        ResetFlags();
+        routine = Observable
+            .FromCoroutine(() => selector.SelectNodeRoutine("Select point for lever"))
+            .SelectMany(() => selector.SelectNodeRoutine("Select point 1"))
+            .SelectMany(() => selector.SelectNodeRoutine("Select point 2"))
+            .Subscribe(_ =>
+            {
+                CreateBarreir(selector.Nodes[0], selector.Nodes[1], selector.Nodes[2]);
+                selector.Reset();
+                LevelInitializer.EndAddObjEvent?.Invoke();
+            });
     }
 
     public void CreateBarreir(GameObject _point1, GameObject _point2, GameObject _point3)
@@ -161,16 +122,16 @@ public class ObstaclePlacement : MonoBehaviour
     public void AddBarbedWire()
     {
         LevelInitializer.StartAddObjEvent?.Invoke();
-        StartCoroutine(PlaceBarbedWireRoutine(barbedWireContextMenuPref));
-    }
-
-    private IEnumerator PlaceBarbedWireRoutine(GameObject contextMenuPref)
-    {
-        yield return SelectTwoPointRoutine();
-        PlaceObstacle(point1, point2, contextMenuPref);
-        InitBarbedWire(point1, point2, point1.GetComponent<DynamicObstacle>());
-        LevelInitializer.EndAddObjEvent?.Invoke();
-        ResetFlags();
+        routine = Observable
+            .FromCoroutine(() => selector.SelectNodeRoutine("Select point 1"))
+            .SelectMany(() => selector.SelectNodeRoutine("Select point 2"))
+            .Subscribe(_ =>
+            {
+                PlaceObstacle(selector.Nodes[0], selector.Nodes[1], barbedWireContextMenuPref);
+                InitBarbedWire(selector.Nodes[0], selector.Nodes[1], selector.Nodes[0].GetComponent<DynamicObstacle>());
+                selector.Reset();
+                LevelInitializer.EndAddObjEvent?.Invoke();
+            });
     }
 
     public void PlaceBarbedWire(GameObject _point1, GameObject _point2)
@@ -235,9 +196,9 @@ public class ObstaclePlacement : MonoBehaviour
             });
     }
 
-    private void PlaceSpotlight(GameObject point1, GameObject point2)
+    public void PlaceSpotlight(GameObject point1, GameObject point2, Quaternion rotation = new Quaternion())
     {
-        var spotlightInstance = Instantiate(spotlightPref, point1.transform.position, Quaternion.identity);
+        var spotlightInstance = Instantiate(spotlightPref, point1.transform.position, rotation);
         spotlightPref.GetComponent<SpotlightMover>().SetMovementParams(point1.transform.position, point2.transform.position);
     }
     #endregion
@@ -260,27 +221,6 @@ public class ObstaclePlacement : MonoBehaviour
         Destroy(obstacle.Point1.GetComponent<Opener>());
         Destroy(obstacle.Point2.GetComponent<Opener>());
         Destroy(obstacle);
-    }
-
-    private IEnumerator SelectTwoPointRoutine()
-    {
-        Debug.Log("Select point one");
-        while (!point1select)
-        {
-            if (raycaster.CheckRaycast(1024, "Node", out point1))
-                point1select = true;
-
-            yield return null;
-        }
-
-        Debug.Log("Select point two");
-        while (!point2select)
-        {
-            if (raycaster.CheckRaycast(1024, "Node", out point2))
-                point2select = true;
-
-            yield return null;
-        }
     }
 
     public void PlaceObstacle(GameObject _point1, GameObject _point2, GameObject contextMenuPref = null)

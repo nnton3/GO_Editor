@@ -2,19 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewLevelConfig", menuName = "Configs/New level config")]
-public class LevelData : ScriptableObject
-{
-    public List<ObjectData> objects = new List<ObjectData>();
-    public List<BarbedWireData> barbedWires = new List<BarbedWireData>();
-    public List<DoorData> doors = new List<DoorData>();
-    public List<BarrierData> barriers = new List<BarrierData>();
-    public List<EnemyData> enemies = new List<EnemyData>();
-    public PlayerData player = new PlayerData();
-    public List<NodeData> nodes = new List<NodeData>();
-    public List<BushData> bushes = new List<BushData>();
-}
-
 [System.Serializable]
 public struct ObjectData
     {
@@ -91,6 +78,25 @@ public struct EnemyData
 }
 
 [System.Serializable]
+public struct OfficerData
+{
+    public EnemyIdentifier identifier;
+    public Vector3 position;
+    public Quaternion rotation;
+    public List<Vector3> patrolPath;
+    public Vector3 checkPosition;
+
+    public OfficerData(Vector3 _pos, Quaternion _rot, List<Vector3> _path, Vector3 _checkPosition)
+    {
+        identifier = EnemyIdentifier.Officer;
+        position = _pos;
+        rotation = _rot;
+        patrolPath = _path;
+        checkPosition = _checkPosition;
+    }
+}
+
+[System.Serializable]
 public struct PlayerData
 {
     public Vector3 position;
@@ -117,6 +123,7 @@ public struct NodeData
     }
 }
 
+[System.Serializable]
 public struct BushData
 {
     public Vector3 pos;
@@ -124,5 +131,20 @@ public struct BushData
     public BushData(Vector3 _pos)
     {
         pos = _pos;
+    }
+}
+
+[System.Serializable]
+public struct SpotlightData
+{
+    public Vector3 startPos;
+    public Vector3 endPos;
+    public Quaternion rotation;
+
+    public SpotlightData(Vector3 _startPos, Vector3 _endPos, Quaternion _rotation)
+    {
+        startPos = _startPos;
+        endPos = _endPos;
+        rotation = _rotation;
     }
 }

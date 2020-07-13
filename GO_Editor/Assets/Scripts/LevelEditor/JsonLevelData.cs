@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 class JsonLevelData
 {
@@ -10,7 +6,9 @@ class JsonLevelData
     public List<BarbedWireData> barbedWires = new List<BarbedWireData>();
     public List<DoorData> doors = new List<DoorData>();
     public List<BarrierData> barriers = new List<BarrierData>();
+    public List<SpotlightData> spotlights = new List<SpotlightData>();
     public List<EnemyData> enemies = new List<EnemyData>();
+    public List<OfficerData> officers = new List<OfficerData>();
     public PlayerData player = new PlayerData();
     public List<NodeData> nodes = new List<NodeData>();
     public List<BushData> bushes = new List<BushData>();

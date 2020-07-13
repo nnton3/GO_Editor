@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -21,21 +22,20 @@ public class LevelInitializer : MonoBehaviour
 
     private EditorInitializer initializer;
     private EditorRaycaster raycaster;
-    private bool isInstancePlayer;
-    private bool point1select;
-    private bool point2select;
-    private bool point3select;
-    private GameObject point1;
-    private GameObject point2;
-    private GameObject point3;
+    private ObjectSelector selector;
+    private IDisposable routine;
+
     public static UnityEvent StartAddObjEvent = new UnityEvent();
     public static UnityEvent EndAddObjEvent = new UnityEvent();
+    private bool isInstancePlayer;
     #endregion
 
     private void Awake()
     {
         raycaster = GetComponent<EditorRaycaster>();
         initializer = FindObjectOfType<EditorInitializer>();
+        selector = GetComponent<ObjectSelector>();
+
         if (initializer == null)
         {
             Debug.Log("Initializer is lost");
@@ -44,16 +44,9 @@ public class LevelInitializer : MonoBehaviour
 
         StartAddObjEvent.AddListener(() =>
         {
-            StopAllCoroutines();
-            ResetFalgs();
+            if (routine != null)
+                routine.Dispose();
         });
-    }
-
-    private void ResetFalgs()
-    {
-        point1select = false;
-        point2select = false;
-        point3select = false;
     }
 
     public void SetMapSize()
@@ -73,7 +66,7 @@ public class LevelInitializer : MonoBehaviour
     {
         if (mapPref == null)
         {
-            Debug.Log("Map pref is lost");
+            Debug.LogWarning("Map pref is lost");
             return;
         }
         var map = Instantiate(mapPref, new Vector3(-2f, 0f, -2f), Quaternion.identity);
@@ -88,7 +81,7 @@ public class LevelInitializer : MonoBehaviour
     {
         if(boardPref == null)
         {
-            Debug.Log("Board pref is lost");
+            Debug.LogWarning("Board pref is lost");
             return;
         }
         Instantiate(boardPref);
@@ -99,7 +92,7 @@ public class LevelInitializer : MonoBehaviour
     {
         if (nodePref == null)
         {
-            Debug.Log("Node pref is lost");
+            Debug.LogWarning("Node pref is lost");
             return;
         }
 
@@ -126,57 +119,59 @@ public class LevelInitializer : MonoBehaviour
 
     public void InstancePlayer()
     {
-        if (playerPref == null)
-        {
-            Debug.Log("Player pref is lost");
-            return;
-        }
-        if (isInstancePlayer)
-        {
-            Debug.Log("You have one player!");
-            return;
-        }
+        if (!CheckPlayer()) return;
+
         StartAddObjEvent?.Invoke();
-        StartCoroutine(InstancePlayerRoutine());
+
+        routine = Observable
+            .FromCoroutine(() => selector.SelectNodeRoutine("Select node to place object"))
+            .Subscribe(_ =>
+            {
+                Instantiate(playerPref, selector.Nodes[0].transform.position, Quaternion.identity);
+                isInstancePlayer = true;
+                selector.Reset();
+                EndAddObjEvent?.Invoke();
+            });
     }
 
     public void InstancePlayer(Vector3 pos)
     {
-        var playerIntance = Instantiate(playerPref, pos, Quaternion.identity);
+        if (!CheckPlayer()) return;
+
+        Instantiate(playerPref, pos, Quaternion.identity);
+        isInstancePlayer = true;
         Debug.Log("Player is intance");
     }
 
-    private IEnumerator InstancePlayerRoutine()
+    private bool CheckPlayer()
     {
-        Debug.Log("Click on point to instance");
-
-        while (!isInstancePlayer)
+        if (playerPref == null)
         {
-            if (raycaster.CheckRaycast(1024, "Node", out point1))
-                isInstancePlayer = true;
-
-            yield return null;
+            Debug.LogWarning("Player pref is lost");
+            return false;
         }
-
-        var playerIntance = Instantiate(playerPref, point1.transform.position, Quaternion.identity);
-        Debug.Log("Player is intance");
-        EndAddObjEvent?.Invoke();
-        ResetFalgs();
+        if (isInstancePlayer)
+        {
+            Debug.LogWarning("You have one player!");
+            return false;
+        }
+        return true;
     }
 
     public void AddLink()
     {
         StartAddObjEvent?.Invoke();
-        StartCoroutine(AddLinkRoutine());
-    }
 
-    private IEnumerator AddLinkRoutine()
-    {
-        yield return SelectTwoPoint();
 
-        CreateLink(point1, point2);
-        EndAddObjEvent?.Invoke();
-        ResetFalgs();
+        routine = Observable
+            .FromCoroutine(() => selector.SelectNodeRoutine("Select point 1"))
+            .SelectMany(() => selector.SelectNodeRoutine("Select point 2"))
+            .Subscribe(_ =>
+            {
+                CreateLink(selector.Nodes[0], selector.Nodes[1]);
+                selector.Reset();
+                EndAddObjEvent?.Invoke();
+            });
     }
 
     public void CreateLink(GameObject point1, GameObject point2)
@@ -190,7 +185,7 @@ public class LevelInitializer : MonoBehaviour
 
         if (!onAxisX && !onAxisZ)
         {
-            Debug.Log("Selected points is not valid");
+            Debug.LogWarning("Selected points is not valid");
             return;
         }
         if (Vector3.Distance(point1.transform.position, point2.transform.position) <= Board.spacing)
@@ -205,24 +200,14 @@ public class LevelInitializer : MonoBehaviour
         var board = FindObjectOfType<Board>();
 
         if (onAxisZ)
-        {
-            if (pos1.x < pos2.x)
-                direction = Vector3.right;
-            else
-                direction = Vector3.left;
-        }
+            direction = (pos1.x < pos2.x) ? Vector3.right : Vector3.left;
         else
-        {
-            if (pos1.z < pos2.z)
-                direction = Vector3.forward;
-            else
-                direction = Vector3.back;
-        }
+            direction = (pos1.z < pos2.z) ? Vector3.forward : Vector3.back;
 
         if (direction == Vector3.zero) return;
 
         var nodeNumber = (int)Vector3.Distance(pos1, pos2) / Board.spacing;
-        var currentNode = point1.GetComponent<Board_Node>();
+        var currentNode = board.FindNodeAt(pos1);
 
         for (int i = 1; i < nodeNumber + 1; i++)
         {
@@ -235,16 +220,16 @@ public class LevelInitializer : MonoBehaviour
     public void DeleteLink()
     {
         StartAddObjEvent?.Invoke();
-        StartCoroutine(DeleteLinkRoutine());
-    }
 
-    private IEnumerator DeleteLinkRoutine()
-    {
-        yield return SelectTwoPoint();
-
-        DestroyLink(point1, point2);
-        EndAddObjEvent?.Invoke();
-        ResetFalgs();
+        routine = Observable
+            .FromCoroutine(() => selector.SelectNodeRoutine("Select point 1"))
+            .SelectMany(() => selector.SelectNodeRoutine("Select point 2"))
+            .Subscribe(_ =>
+            {
+                DestroyLink(selector.Nodes[0], selector.Nodes[1]);
+                selector.Reset();
+                EndAddObjEvent?.Invoke();
+            });
     }
 
     private void DestroyLink(GameObject point1, GameObject point2)
@@ -280,33 +265,6 @@ public class LevelInitializer : MonoBehaviour
 
         foreach (var node in FindObjectOfType<Board>().AllNodes)
             node.ShowGeometry();
-    }
-
-    private IEnumerator SelectTwoPoint()
-    {
-        Debug.Log("Set point one");
-        while (!point1select)
-        {
-            if (raycaster.CheckRaycast(1024, "Node", out point1))
-                point1select = true;
-
-            yield return null;
-        }
-
-        Debug.Log("Set point two");
-        while (!point2select)
-        {
-            if (raycaster.CheckRaycast(1024, "Node", out point2))
-            {
-                if (point1 == point2)
-                {
-                    Debug.Log("Choose valid point");
-                    yield break;
-                }
-                point2select = true;
-            }
-            yield return null;
-        }
     }
 
     public void FastStart()

@@ -89,6 +89,7 @@ public class Board : MonoBehaviour
     public void UpdatePlayerNode()
     {
         playerNode = FindPlayerNode();
+        var objectPlacement = FindObjectOfType<ObjectPlacement>();
 
         switch (playerNode.Type)
         {
@@ -97,17 +98,23 @@ public class Board : MonoBehaviour
                 player.GetComponent<PlayerManager>().Die();
                 break;
             case NodeType.Cutter:
-                playerNode.Type = NodeType.Default;
+                ClearNode();
                 playerInventory.HaveCutter = true;
                 break;
             case NodeType.Key:
-                playerNode.Type = NodeType.Default;
                 playerInventory.Keys.Add(playerNode.GetComponent<KeyIndex>().Index);
+                ClearNode();
                 break;
             case NodeType.Map:
                 break;
             default:
                 break;
+        }
+
+        void ClearNode()
+        {
+            if (objectPlacement != null) objectPlacement.DeleteObject(playerNode);
+            else playerNode.Type = NodeType.Default;
         }
     }
 
