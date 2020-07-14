@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System;
 using UniRx;
@@ -31,6 +30,7 @@ public class EnemyPlacement : MonoBehaviour
         });
     }
 
+    #region Spawn enemy
     public void AddEnemy(int enemyType)
     {
         LevelInitializer.StartAddObjEvent?.Invoke();
@@ -71,6 +71,15 @@ public class EnemyPlacement : MonoBehaviour
         return null;
     }
 
+    private GameObject InstanceEnemy(GameObject enemyPref, Vector3 pos)
+    {
+        var enemy = Instantiate(enemyPref, pos, Quaternion.identity);
+        enemy.GetComponent<EnemyManager>().Initialize();
+        return enemy;
+    }
+    #endregion
+
+    #region Officer
     public void AddEnemyOfficer()
     {
         LevelInitializer.StartAddObjEvent?.Invoke();
@@ -80,28 +89,27 @@ public class EnemyPlacement : MonoBehaviour
             .SelectMany(() => selector.SelectNodeRoutine("Select patrol point3"))
             .SelectMany(() => selector.SelectNodeRoutine("Select patrol point4"))
             .SelectMany(() => selector.SelectNodeRoutine("Select start point"))
-            .SelectMany(() => selector.SelectNodeRoutine("Select check setry point"))
-            .SelectMany(() => selector.SelectEnemyRoutine("Select enemy for check"))
             .Subscribe(_ =>
             {
                 var points = new List<Vector3>();
                 selector.Nodes.GetRange(0, 4).ForEach(node => points.Add(node.transform.position));
                 InstanceOfficer(
                     selector.Nodes[4].transform.position, 
-                    points, 
-                    new PatrolData(selector.Nodes[5].transform.position, selector.Enemy));
+                    points);
                 selector.Reset();
                 LevelInitializer.EndAddObjEvent?.Invoke();
             });
     }
 
-    public void AddEnemyOfficer(Vector3 startPos, List<Vector3> waypoints, PatrolData patrolData, Quaternion rotation)
+    public GameObject AddEnemyOfficer(Vector3 startPos, List<Vector3> waypoints, PatrolData patrolData, Quaternion rotation)
     {
         var instance = InstanceOfficer(startPos, waypoints, patrolData);
         if (instance != null) instance.transform.rotation = rotation;
+
+        return instance;
     }
 
-    private GameObject InstanceOfficer(Vector3 startPos, List<Vector3> waypoints, PatrolData patrolData)
+    private GameObject InstanceOfficer(Vector3 startPos, List<Vector3> waypoints, PatrolData patrolData = new PatrolData())
     {
         if (InputParamsValid(startPos, waypoints, patrolData))
         {
@@ -116,19 +124,19 @@ public class EnemyPlacement : MonoBehaviour
     private bool InputParamsValid(Vector3 startPos, List<Vector3> waypoints, PatrolData patrolData)
     {
         bool startposValid = false;
-        bool checkPatrolPositionValid = false;
+        // bool checkPatrolPositionValid = false;
 
         for (int i = 0; i < waypoints.Count - 1; i++)
         {
             if (waypoints[i].x == waypoints[i + 1].x)
             {
                 if (startPos.x == waypoints[i].x) startposValid = true;
-                if (patrolData.Position.x == waypoints[i].x) checkPatrolPositionValid = true;
+                // if (patrolData.Position.x == waypoints[i].x) checkPatrolPositionValid = true;
             }
             else if (waypoints[i].z == waypoints[i + 1].z)
             {
                 if (startPos.z == waypoints[i].z) startposValid = true;
-                if (patrolData.Position.z == waypoints[i].z) checkPatrolPositionValid = true;
+                // if (patrolData.Position.z == waypoints[i].z) checkPatrolPositionValid = true;
             }
             else
             {
@@ -148,19 +156,49 @@ public class EnemyPlacement : MonoBehaviour
             Debug.Log("Start position is not valid");
             return false;
         }
-        if (!checkPatrolPositionValid)
-        {
-            Debug.Log("Position for check sentry is not valid");
-            return false;
-        }
 
         return true;
     }
 
-    private GameObject InstanceEnemy(GameObject enemyPref, Vector3 pos)
+    public void AddPatrolData(GameObject officer)
     {
-        var enemy = Instantiate(enemyPref, pos, Quaternion.identity);
-        enemy.GetComponent<EnemyManager>().Initialize();
-        return enemy;
+        LevelInitializer.StartAddObjEvent?.Invoke();
+        routine = Observable
+            .FromCoroutine(_ => selector.SelectNodeRoutine("Select point for check"))
+            .SelectMany(_ => selector.SelectEnemyRoutine("Select enemy for check"))
+            .Subscribe(_ =>
+            {
+                SetOfficerPatrolData(
+                    officer,
+                    new PatrolData(
+                        selector.Nodes[0].transform.position,
+                        selector.Enemy));
+
+                selector.Reset();
+                LevelInitializer.EndAddObjEvent?.Invoke();
+            });
     }
+
+    private bool PatrolDataIsValid(List<Vector3> waypoints, PatrolData patrolData)
+    {
+        bool checkPatrolPositionValid = false;
+
+        for (int i = 0; i < waypoints.Count - 1; i++)
+        {
+            if (waypoints[i].x == waypoints[i + 1].x)
+            {
+                if (patrolData.Position.x == waypoints[i].x)
+                    checkPatrolPositionValid = true;
+            }
+            else if (waypoints[i].z == waypoints[i + 1].z)
+                if (patrolData.Position.z == waypoints[i].z)
+                    checkPatrolPositionValid = true;
+        }
+
+        return checkPatrolPositionValid;
+    }
+
+    public void SetOfficerPatrolData(GameObject officer, PatrolData patrolData) =>
+        officer.GetComponent<EnemyMover_Officer>().SetPatrolParams(patrolData);
+    #endregion
 }

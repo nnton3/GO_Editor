@@ -200,6 +200,7 @@ public class ObstaclePlacement : MonoBehaviour
     {
         var spotlightInstance = Instantiate(spotlightPref, point1.transform.position, rotation);
         spotlightPref.GetComponent<SpotlightMover>().SetMovementParams(point1.transform.position, point2.transform.position);
+        spotlightInstance.transform.rotation = rotation;
     }
     #endregion
 

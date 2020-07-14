@@ -79,18 +79,22 @@ public class Mover : MonoBehaviour
     public void MoveLeft()
     {
         Vector3 newPosition = transform.position + new Vector3(-Board.spacing, 0, 0);
+        CheckYPos(ref newPosition);
+
         Move(newPosition, 0);
     }
 
     public void MoveRight()
     {
         Vector3 newPosition = transform.position + new Vector3(Board.spacing, 0, 0);
+        CheckYPos(ref newPosition);
         Move(newPosition, 0);
     }
 
     public void MoveForward()
     {
         Vector3 newPosition = transform.position + new Vector3(0, 0, Board.spacing);
+        CheckYPos(ref newPosition);
         Move(newPosition, 0);
     }
 
@@ -98,6 +102,18 @@ public class Mover : MonoBehaviour
     {
         Vector3 newPosition = transform.position + new Vector3(0, 0, -Board.spacing);
         Move(newPosition, 0);
+    }
+
+    private void CheckYPos(ref Vector3 newPosition)
+    {
+        var node = board.FindNodeAt(newPosition);
+        if (newPosition.y != node.transform.position.y)
+        {
+            var deltaDir = (newPosition.y < node.transform.position.y) ? Vector3.up : Vector3.down;
+            var deltaApm = (int)Mathf.Abs(newPosition.y - node.transform.position.y);
+            deltaDir *= deltaApm;
+            newPosition += deltaDir;
+        }
     }
 
     protected void UpdateCurrentNode()

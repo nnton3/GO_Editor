@@ -464,7 +464,7 @@ public class SavingSystem : MonoBehaviour
                 var enemies = FindObjectsOfType<EnemyMover_Spinner>();
                 var enemyList = enemies.ToList();
                 var checkedEnemy = enemyList.Find(e => e.transform.position == target.checkPosition);
-                Debug.Log(target.rotation.eulerAngles);
+                
                 enemyPlacement.AddEnemyOfficer(
                     target.position,
                     target.patrolPath,

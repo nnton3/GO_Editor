@@ -61,7 +61,7 @@ public class EnemyMover_Officer : EnemieMover
 
     private void SetTargetPoint()
     {
-        currentTargetWaypoint++;// = waypoints.IndexOf(waypoints.Find(wp => wp == transform.position)) + 1;
+        currentTargetWaypoint++;
         if (currentTargetWaypoint >= waypoints.Count)
         {
             if (loop)
@@ -87,6 +87,7 @@ public class EnemyMover_Officer : EnemieMover
 
     private void CheckPatrol()
     {
+        if (checkPatrol.Enemy == null) return;
         if (transform.position != checkPatrol.Position) return;
         
         var node = board.FindNodeAt(checkPatrol.Position);
@@ -102,11 +103,14 @@ public class EnemyMover_Officer : EnemieMover
     }
 
     // EDITOR FUNCTIONS
-    public void SetPatrolParams(List<Vector3> _waypoints, PatrolData _checkPatrol, bool _loop = false)
+    public void SetPatrolParams(List<Vector3> _waypoints, PatrolData _checkPatrol = new PatrolData(), bool _loop = false)
     {
         waypoints.Clear();
         waypoints.AddRange(_waypoints);
         checkPatrol = _checkPatrol;
         loop = _loop;
     }
+
+    public void SetPatrolParams(PatrolData _checkPatrol) =>
+        checkPatrol = _checkPatrol;
 }
