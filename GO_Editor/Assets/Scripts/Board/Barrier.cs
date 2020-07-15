@@ -2,8 +2,6 @@
 
 public class Barrier : DynamicObstacle
 {
-    private bool isOpen;
-
     public void SwapBarrier()
     {
         if (isOpen)

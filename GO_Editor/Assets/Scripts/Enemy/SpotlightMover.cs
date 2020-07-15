@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿ using System.Collections;
 using UnityEngine;
 
 public class SpotlightMover : EnemieMover
@@ -17,7 +17,7 @@ public class SpotlightMover : EnemieMover
 
     private IEnumerator PatrolRoutine()
     {
-        var startPos = new Vector3(currentNode.Coordinate.x, 0f, currentNode.Coordinate.y);
+        var startPos = transform.position;
         var newDest = startPos + transform.TransformVector(directionToMove);
 
         Move(newDest, 0f);
