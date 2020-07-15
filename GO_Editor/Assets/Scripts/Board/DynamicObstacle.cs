@@ -16,7 +16,7 @@ public class DynamicObstacle : MonoBehaviour
     private GameObject obstacle;
     public GameObject Obstacle => obstacle;
 
-    private bool isOpen = false;
+    protected bool isOpen = false;
     public bool IsOpen=> isOpen;
     #endregion
 

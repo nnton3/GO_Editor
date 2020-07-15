@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -42,6 +41,7 @@ public class Mover : MonoBehaviour
     protected virtual IEnumerator MoveRoutine(Vector3 destinationPos, float delayTime)
     {
         isMoving = true;
+        CheckYPos(ref destinationPos);
         destination = destinationPos;
 
         if (faceDestination)
@@ -79,22 +79,18 @@ public class Mover : MonoBehaviour
     public void MoveLeft()
     {
         Vector3 newPosition = transform.position + new Vector3(-Board.spacing, 0, 0);
-        CheckYPos(ref newPosition);
-
         Move(newPosition, 0);
     }
 
     public void MoveRight()
     {
         Vector3 newPosition = transform.position + new Vector3(Board.spacing, 0, 0);
-        CheckYPos(ref newPosition);
         Move(newPosition, 0);
     }
 
     public void MoveForward()
     {
         Vector3 newPosition = transform.position + new Vector3(0, 0, Board.spacing);
-        CheckYPos(ref newPosition);
         Move(newPosition, 0);
     }
 
