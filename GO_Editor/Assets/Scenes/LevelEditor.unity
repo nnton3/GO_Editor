@@ -4716,6 +4716,7 @@ GameObject:
   - component: {fileID: 1314746449}
   - component: {fileID: 1314746450}
   - component: {fileID: 1314746451}
+  - component: {fileID: 1314746452}
   m_Layer: 0
   m_Name: EditorComponents
   m_TagString: Untagged
@@ -4898,6 +4899,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 850eba3f19ebb7842b84160d492945dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1314746452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1314746441}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 048120e68e0fa9344aa41268b05488e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  floorPref: {fileID: 832824702719212996, guid: dcb815fc9694c5345b4af56e8c8b6da8,
+    type: 3}
+  stairsPref: {fileID: 9055904725737769932, guid: b79edcaa7ed1f8d4caaae3fa8a4db751,
+    type: 3}
 --- !u!1 &1323613915
 GameObject:
   m_ObjectHideFlags: 0
@@ -5320,7 +5337,7 @@ GameObject:
   - component: {fileID: 1459534991}
   - component: {fileID: 1459534990}
   m_Layer: 5
-  m_Name: KeyButton
+  m_Name: StairsButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5388,8 +5405,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1314746447}
-        m_MethodName: 
+      - m_Target: {fileID: 1314746452}
+        m_MethodName: AddStairs
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5808,7 +5825,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Add object
+  m_Text: Edit map
 --- !u!222 &1550121579
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7333,7 +7350,7 @@ GameObject:
   - component: {fileID: 1953627725}
   - component: {fileID: 1953627724}
   m_Layer: 5
-  m_Name: StoneButton
+  m_Name: BuildingBlockButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7401,8 +7418,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1314746447}
-        m_MethodName: 
+      - m_Target: {fileID: 1314746452}
+        m_MethodName: AddHightFloor
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

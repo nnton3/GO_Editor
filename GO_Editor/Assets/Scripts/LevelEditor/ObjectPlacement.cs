@@ -13,13 +13,13 @@ public class ObjectPlacement : MonoBehaviour
     [SerializeField] private GameObject contextMenuPref;
     [SerializeField] private GameObject keyContextMenuPref;
 
-    private ObjectSelector selector;
+    private EditorSelector selector;
     private IDisposable routine;
     #endregion
 
     private void Awake()
     {
-        selector = GetComponent<ObjectSelector>();
+        selector = GetComponent<EditorSelector>();
 
         LevelInitializer.StartAddObjEvent.AddListener(() =>
         {

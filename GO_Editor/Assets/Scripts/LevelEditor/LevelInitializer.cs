@@ -22,7 +22,7 @@ public class LevelInitializer : MonoBehaviour
 
     private EditorInitializer initializer;
     private EditorRaycaster raycaster;
-    private ObjectSelector selector;
+    private EditorSelector selector;
     private IDisposable routine;
 
     public static UnityEvent StartAddObjEvent = new UnityEvent();
@@ -34,7 +34,7 @@ public class LevelInitializer : MonoBehaviour
     {
         raycaster = GetComponent<EditorRaycaster>();
         initializer = FindObjectOfType<EditorInitializer>();
-        selector = GetComponent<ObjectSelector>();
+        selector = GetComponent<EditorSelector>();
 
         if (initializer == null)
         {

@@ -14,14 +14,14 @@ public class EnemyPlacement : MonoBehaviour
     [SerializeField] private GameObject enemyKinologistPref;
 
     private EditorRaycaster raycaster;
-    private ObjectSelector selector;
+    private EditorSelector selector;
     private IDisposable routine;
     #endregion
 
     private void Awake()
     {
         raycaster = GetComponent<EditorRaycaster>();
-        selector = GetComponent<ObjectSelector>();
+        selector = GetComponent<EditorSelector>();
 
         LevelInitializer.StartAddObjEvent.AddListener(() =>
         {
