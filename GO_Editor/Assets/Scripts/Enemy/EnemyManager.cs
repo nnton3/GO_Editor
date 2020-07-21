@@ -39,7 +39,14 @@ public class EnemyManager : TurnManager
         enemieSensor = GetComponent<EnemySensor>();
         enemyAttack = GetComponent<EnemyAttack>();
 
-        if (enemyMover != null) enemyMover.FinishMovementEvent.AddListener(FinishTurn);
+        if (enemyMover != null) enemyMover.FinishMovementEvent.AddListener(() =>
+        {
+            enemieSensor.UpdateSensor();
+            if (enemieSensor.FoundPlayer)
+                StartCoroutine(Kill());
+            else 
+                FinishTurn();
+        });
     }
 
     public void PlayTurn()

@@ -90,38 +90,49 @@ public class PlayerManager : TurnManager
         DeathEvent?.Invoke();
     }
 
-    private void CaptureEnemies()
+    private IEnumerator CaptureEnemies()
     {
-        if (board == null) return;
+        if (playerMover.CurrentNode.Type != NodeType.Bush)
+            if (board != null)
+            {
+                var enemies = board.FindEnemiesAt(board.PlayerNode);
 
+                foreach (var enemy in enemies)
+                {
+                    if (!enemy.GetComponent<EnemyMover_Liquidator>())
+                        enemy.Die();
+                    else
+                    {
+                        Debug.Log("Liquidator");
+                        Die();
+                    }
+                }
+                yield return new WaitForSeconds(1.5f);
+            }
+
+        base.FinishTurn();
+        playerInput.InputEnabled = true;
+    }
+
+    private bool HaveEnemieOnWay()
+    {
         var enemies = board.FindEnemiesAt(board.PlayerNode);
-
-        if (enemies.Count == 0) return;
-
-        foreach (var enemy in enemies)
-        {
-            if (!enemy.GetComponent<EnemyMover_Liquidator>())
-            {
-                enemy.Die();
-            }
-            else
-            {
-                Debug.Log("Liquidator");
-                Die();
-            }
-        }
+        if (enemies.Count == 0)
+            return false;
+        else return true;
     }
 
     public override void FinishTurn()
     {
-        CaptureEnemies();
 
         if (playerMover.CurrentNode.Type == NodeType.Stone)
         {
             playerInput.InputEnabled = false;
             StartCoroutine(ReliseStone());
         }
-        else
+        else if (HaveEnemieOnWay())
+            StartCoroutine(CaptureEnemies());
+        else 
             base.FinishTurn();
     }
 

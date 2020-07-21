@@ -140,6 +140,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   borderWidth: 0.02
   lineThickness: 1
-  scaleTime: 0.25
+  scaleTime: 0.5
   delay: 0.1
   easeType: 14
