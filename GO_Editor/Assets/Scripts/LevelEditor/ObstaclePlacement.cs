@@ -25,7 +25,7 @@ public class ObstaclePlacement : MonoBehaviour
         raycaster = GetComponent<EditorRaycaster>();
         selector = GetComponent<EditorSelector>();
 
-        LevelInitializer.EndAddObjEvent.AddListener(() =>
+        LevelInitializer.StartAddObjEvent.AddListener(() =>
         {
             if (routine != null)
                 routine.Dispose();
