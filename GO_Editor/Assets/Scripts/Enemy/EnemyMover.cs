@@ -18,6 +18,7 @@ public class EnemieMover : Mover
     public Quaternion StartRotation => startRotation;
 
     protected WPManager wpmanager;
+    protected EnemySensor sensor;
     protected List<GameObject> pathToTarget = new List<GameObject>();
     protected int currentPathIndex;
     protected bool playerLost;
@@ -33,7 +34,7 @@ public class EnemieMover : Mover
 
         startRotation = transform.rotation;
         wpmanager = FindObjectOfType<WPManager>();
-
+        sensor = GetComponent<EnemySensor>();
     }
 
     public virtual void MoveOneTurn() { }
