@@ -19,7 +19,7 @@ public class Mover : MonoBehaviour
     protected Board_Node currentNode;
     public Board_Node CurrentNode => currentNode;
 
-    [HideInInspector] public UnityEvent FinishMovementEvent;
+    public UnityEvent FinishMovementEvent;
     #endregion
 
     public virtual void Initialize()
@@ -28,7 +28,7 @@ public class Mover : MonoBehaviour
         UpdateCurrentNode();
     }
 
-    public virtual void Move(Vector3 destinationPos, float delayTime = 0.025f)
+    public virtual void Move(Vector3 destinationPos, float delayTime = 0f)
     {
         if (board == null) return;
         var targetNode = board.FindNodeAt(destinationPos);
@@ -131,5 +131,10 @@ public class Mover : MonoBehaviour
             "delay", 0f,
             "easetype", easeType,
             "time", rotateTime));
+    }
+
+    private void OnDestroy()
+    {
+        FinishMovementEvent.RemoveAllListeners();
     }
 }

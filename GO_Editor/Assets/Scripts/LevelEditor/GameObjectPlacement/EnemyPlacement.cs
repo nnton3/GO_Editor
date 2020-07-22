@@ -74,7 +74,7 @@ public class EnemyPlacement : MonoBehaviour
     private GameObject InstanceEnemy(GameObject enemyPref, Vector3 pos)
     {
         var enemy = Instantiate(enemyPref, pos, Quaternion.identity);
-        enemy.GetComponent<EnemyManager>().Initialize();
+        //enemy.GetComponent<EnemyManager>().Initialize();
         return enemy;
     }
     #endregion

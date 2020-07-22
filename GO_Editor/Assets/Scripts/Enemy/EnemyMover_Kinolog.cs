@@ -19,7 +19,7 @@ public class EnemyMover_Kinolog : EnemyMover_Patrol
     {
         if (!NodeIsValid())
         {
-            ToReturnToStartState();
+            ReturnToStartState();
             playerLost = true;
             MoveToTarget();
         }

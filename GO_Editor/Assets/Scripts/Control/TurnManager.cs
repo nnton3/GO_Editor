@@ -16,6 +16,7 @@ public class TurnManager : MonoBehaviour
 
     public virtual void FinishTurn()
     {
+        //Debug.Log($"{gameObject.name} is complete turn");
         isTurnComplete = true;
         if (gameManager == null) return;
         gameManager.UpdateTurn();

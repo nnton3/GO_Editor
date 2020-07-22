@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UniRx;
 
 public class EnemyMover_Spinner : EnemieMover
 {
@@ -10,9 +11,20 @@ public class EnemyMover_Spinner : EnemieMover
         else MoveToTarget();
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            Debug.Log("invoke");
+            base.FinishMovementEvent.Invoke();
+        }
+    }
+
     private void Spin()
     {
-        StartCoroutine(SpinRoutine());
+        Observable
+            .FromCoroutine(() => SpinRoutine())
+            .Subscribe(_ => base.FinishMovementEvent.Invoke());
     }
 
     private IEnumerator SpinRoutine()
@@ -23,7 +35,5 @@ public class EnemyMover_Spinner : EnemieMover
         FaceDestination();
 
         yield return new WaitForSeconds(rotateTime);
-
-        base.FinishMovementEvent.Invoke();
     }
 }

@@ -153,10 +153,14 @@ public class GameManager : MonoBehaviour
     {
         currentTurn = Turn.Player;
         player.IsTurnComplete = false;
+        Debug.Log($"start new player turn, {player.IsTurnComplete}");
+        player.PlayerInput.InputEnabled = true;
     }
 
     private void PlayEnemiesTurn()
     {
+        Debug.Log($"start new enemies turn, {player.IsTurnComplete}");
+
         currentTurn = Turn.Enemy;
 
         foreach (var enemy in enemies)
