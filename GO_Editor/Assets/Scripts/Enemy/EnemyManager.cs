@@ -65,7 +65,7 @@ public class EnemyManager : TurnManager
         {
             enemieSensor.UpdateSensor();
             
-            yield return new WaitForSeconds(0f);
+            yield return null;
             
             if (enemieSensor.FoundPlayer)
                 yield return StartCoroutine(Kill());
@@ -74,7 +74,7 @@ public class EnemyManager : TurnManager
         }
     }
 
-    protected virtual IEnumerator Kill()
+    public virtual IEnumerator Kill()
     {
         gameManager.LoseLevel();
 

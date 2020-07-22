@@ -5,7 +5,7 @@ public class SpotlightManager : EnemyManager
 {
     [SerializeField] float alarmDelay = 2f;
 
-    protected override IEnumerator Kill()
+    public override IEnumerator Kill()
     {
         Debug.Log("raise alarm");
         yield return new WaitForSeconds(alarmDelay);

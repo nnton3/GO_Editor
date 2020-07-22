@@ -39,23 +39,31 @@ public class EnemyMover_Officer : EnemieMover
     private IEnumerator SquarePatrolRoutine()
     {
         var startPos = transform.position;
-        var newDest = startPos + transform.TransformVector(directionToMove);
-
-        Move(newDest, 0f);
-
-        while (isMoving)
-            yield return null;
-
-        if (waypoints[currentTargetWaypoint] == newDest)
+        Debug.Log($"{startPos} = {waypoints[currentTargetWaypoint]}? {waypoints[currentTargetWaypoint] == startPos}");
+        if (Vector3.Distance(waypoints[currentTargetWaypoint], startPos) < .1f)
         {
+            Debug.Log("work");
             SetTargetPoint();
-
+            sensor.UpdateSensor();
             yield return new WaitForSeconds(rotateTime);
         }
+        Debug.Log($"{waypoints[currentTargetWaypoint]} current target");
 
-        CheckPatrol();
+        var newDest = startPos + transform.TransformVector(directionToMove);
 
-        base.FinishMovementEvent.Invoke();
+        if (sensor.FoundPlayer)
+            yield return StartCoroutine(GetComponent<EnemyManager>().Kill());
+        else
+        {
+            Move(newDest, 0f);
+
+            while (isMoving)
+                yield return null;
+
+            CheckPatrol();
+
+            base.FinishMovementEvent.Invoke();
+        }
     }
 
     private void SetTargetPoint()

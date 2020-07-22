@@ -19,33 +19,30 @@ public class EnemyMover_Patrol : EnemieMover
     {
         var startPos = new Vector3(currentNode.Coordinate.x, 0f, currentNode.Coordinate.y);
         var newDest = startPos + transform.TransformVector(directionToMove);
-        var nextDest = startPos + transform.TransformVector(directionToMove * 2);
 
-        Move(newDest, 0f);
-
-        while (isMoving)
-            yield return null;
-
-        if (board != null)
+        var startNode = board.FindNodeAt(startPos);
+        var nextNode = board.FindNodeAt(newDest);
+        if (!startNode.LinkedNodes.Find(n => n.Coordinate == nextNode.Coordinate))
         {
-            var newDestNode = board.FindNodeAt(newDest);
-            var nextDestNode = board.FindNodeAt(nextDest);
+            newDest = startPos - transform.TransformVector(directionToMove);
+            destination = newDest;
+            FaceDestination();
 
-            if (nextDestNode == null)
-            {
-                destination = startPos;
-                FaceDestination();
+            yield return new WaitForSeconds(rotateTime + 0.1f);
 
-                yield return new WaitForSeconds(rotateTime);
-            }
-            else if (newDestNode.LinkedNodes.Find(n => n.Coordinate == nextDestNode.Coordinate) == null)
-            {
-                destination = startPos;
-                FaceDestination();
-
-                yield return new WaitForSeconds(rotateTime);
-            }
+            sensor.UpdateSensor();
         }
-        base.FinishMovementEvent.Invoke();
+
+        if (sensor.FoundPlayer)
+            yield return StartCoroutine(GetComponent<EnemyManager>().Kill());
+        else
+        {
+            Move(newDest, 0f);
+
+            while (isMoving)
+                yield return null;
+
+            base.FinishMovementEvent.Invoke();
+        }
     }
 }
