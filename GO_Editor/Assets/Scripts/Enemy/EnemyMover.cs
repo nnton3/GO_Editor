@@ -22,7 +22,6 @@ public class EnemieMover : Mover
     protected List<GameObject> pathToTarget = new List<GameObject>();
     protected int currentPathIndex;
     protected bool playerLost;
-
     #endregion
 
     public override void Initialize()
@@ -35,6 +34,7 @@ public class EnemieMover : Mover
         startRotation = transform.rotation;
         wpmanager = FindObjectOfType<WPManager>();
         sensor = GetComponent<EnemySensor>();
+        GetComponent<EnemyManager>().DeathEvent.AddListener(() => currentNode = null);
     }
 
     public virtual void MoveOneTurn() { }
@@ -54,12 +54,12 @@ public class EnemieMover : Mover
     protected void SetPath(Board_Node node)
     {
         pathToTarget = wpmanager.GetPath(currentNode.gameObject, node.gameObject);
-        Debug.Log($"Is Enemy have valid path? {PathIsValid()}");
+
         if (PathIsValid())
             PrepareToMove();
     }
 
-    protected void ToReturnToStartState()
+    protected void ReturnToStartState()
     {
         if (startNode == currentNode) return;
         SetPath(startNode);
@@ -90,7 +90,7 @@ public class EnemieMover : Mover
     {
         if (!NodeIsValid())
         {
-            ToReturnToStartState();
+            ReturnToStartState();
             playerLost = true;
             MoveToTarget();
         }
@@ -99,27 +99,33 @@ public class EnemieMover : Mover
             var startPos = new Vector3(currentNode.Coordinate.x, 0f, currentNode.Coordinate.y);
             var newDest = pathToTarget[currentPathIndex].transform.position;
 
-            Move(newDest, 0f);
+            destination = newDest;
+            FaceDestination();
 
-            while (isMoving)
-                yield return null;
+            yield return new WaitForSeconds(rotateTime + 0.1f);
 
-            currentPathIndex++;
+            sensor.UpdateSensor();
 
-            if (currentPathIndex >= pathToTarget.Count)
-            {
-                if (state == EnemyState.Alarm)
-                    ToReturnToStartState();
-                else if (state == EnemyState.ReturnToStart)
-                    ToDefaultState();
-                FinishMovementEvent.Invoke();
-            }
+            if (sensor.FoundPlayer)
+                yield return StartCoroutine(GetComponent<EnemyManager>().Kill());
             else
             {
-                destination = pathToTarget[currentPathIndex].transform.position;
-                FaceDestination();
+                Move(newDest, 0f);
 
-                FinishMovementEvent.Invoke();
+                while (isMoving)
+                    yield return null;
+
+                currentPathIndex++;
+
+                if (currentPathIndex >= pathToTarget.Count)
+                {
+                    if (state == EnemyState.Alarm)
+                        ReturnToStartState();
+                    else if (state == EnemyState.ReturnToStart)
+                        ToDefaultState();
+                }
+
+                base.FinishMovementEvent.Invoke();
             }
         }
     }
@@ -133,7 +139,7 @@ public class EnemieMover : Mover
         SetPath(targetNode);
 
         if (pathToTarget.Count == 0)
-            ToReturnToStartState();
+            ReturnToStartState();
     }
 
     private void PrepareToMove()

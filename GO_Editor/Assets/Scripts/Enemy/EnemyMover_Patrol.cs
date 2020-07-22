@@ -42,7 +42,7 @@ public class EnemyMover_Patrol : EnemieMover
             while (isMoving)
                 yield return null;
 
-            base.FinishMovementEvent.Invoke();
+            base.FinishMovementEvent?.Invoke();
         }
     }
 }

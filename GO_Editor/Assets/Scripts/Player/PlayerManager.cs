@@ -29,7 +29,7 @@ public class PlayerManager : TurnManager
         playerInput = GetComponent<PlayerInput>();
         playerDeath = GetComponent<PlayerDeath>();
 
-        if (playerMover != null) playerMover.FinishMovementEvent.AddListener(FinishTurn);
+        if (playerMover != null) playerMover.FinishMovementEvent.AddListener(() => FinishTurn());
         if (playerDeath != null) DeathEvent.AddListener(playerDeath.Die);
         isInitialized = true;
     }
@@ -66,14 +66,7 @@ public class PlayerManager : TurnManager
                 {
                     var enemy = raycast.transform.GetComponent<EnemyManager>();
                     if (TargetIsValid(enemy))
-                    {
-                        patrons--;
-                        enemy.Die();
-                        playerFire = false;
-                        playerInput.InputEnabled = true;
-                        GameManager.RaiseAlarmEvent?.Invoke(playerMover.CurrentNode);
-                        FinishTurn();
-                    }
+                        StartCoroutine(KillEnemy(enemy));
                 }
             }
 
@@ -85,6 +78,20 @@ public class PlayerManager : TurnManager
         }
     }
 
+    private IEnumerator KillEnemy(EnemyManager enemy)
+    {
+        playerInput.InputEnabled = false;
+
+        patrons--;
+        enemy.Die();
+        playerFire = false;
+        GameManager.RaiseAlarmEvent?.Invoke(playerMover.CurrentNode);
+
+        yield return new WaitForSeconds(1f);
+        base.FinishTurn();
+        playerInput.InputEnabled = true;
+    }
+
     public void Die()
     {
         DeathEvent?.Invoke();
@@ -92,6 +99,8 @@ public class PlayerManager : TurnManager
 
     private IEnumerator CaptureEnemies()
     {
+        playerInput.InputEnabled = false;
+
         if (playerMover.CurrentNode.Type != NodeType.Bush)
             if (board != null)
             {
@@ -110,6 +119,7 @@ public class PlayerManager : TurnManager
                 yield return new WaitForSeconds(1.5f);
             }
 
+        Debug.Log("player turn complete, capture enemies");
         base.FinishTurn();
         playerInput.InputEnabled = true;
     }
@@ -124,16 +134,25 @@ public class PlayerManager : TurnManager
 
     public override void FinishTurn()
     {
-
+        Debug.Log("turn is finished");
         if (playerMover.CurrentNode.Type == NodeType.Stone)
         {
             playerInput.InputEnabled = false;
             StartCoroutine(ReliseStone());
         }
         else if (HaveEnemieOnWay())
+        {
+            playerInput.InputEnabled = false;
             StartCoroutine(CaptureEnemies());
-        else 
-            base.FinishTurn();
+        }
+        else
+        {
+            IsTurnComplete = true;
+            Debug.Log($"player is complete turn? {IsTurnComplete}");
+            if (gameManager == null) return;
+            gameManager.UpdateTurn();
+            //base.FinishTurn();
+        }
     }
 
     private IEnumerator ReliseStone()
@@ -160,6 +179,9 @@ public class PlayerManager : TurnManager
         yield return new WaitForSeconds(1f);
         playerMover.CurrentNode.Type = NodeType.Default;
         stoneRelised = false;
+
+        Debug.Log("player turn complete, stone");
+
         base.FinishTurn();
         playerInput.InputEnabled = true;
     }

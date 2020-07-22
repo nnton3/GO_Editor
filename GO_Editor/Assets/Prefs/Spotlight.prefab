@@ -84,18 +84,7 @@ MonoBehaviour:
   rotateTime: 0.5
   FinishMovementEvent:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7394543751394197148}
-        m_MethodName: FinishTurn
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   startPoint: {x: 0, y: 0, z: 0}
   endPoint: {x: 0, y: 0, z: 0}
 --- !u!114 &6027545987524159715
