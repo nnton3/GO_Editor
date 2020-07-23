@@ -22,7 +22,7 @@ public class EnemyMover_Patrol : EnemieMover
 
         var startNode = board.FindNodeAt(startPos);
         var nextNode = board.FindNodeAt(newDest);
-        if (!startNode.LinkedNodes.Find(n => n.Coordinate == nextNode.Coordinate))
+        if (nextNode == null || !startNode.LinkedNodes.Find(n => n.Coordinate == nextNode.Coordinate))
         {
             newDest = startPos - transform.TransformVector(directionToMove);
             destination = newDest;

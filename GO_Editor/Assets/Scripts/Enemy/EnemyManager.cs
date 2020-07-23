@@ -96,6 +96,11 @@ public class EnemyManager : TurnManager
         DeathEvent?.Invoke();        
     }
 
+    private void OnDestroy()
+    {
+        DeathEvent.RemoveAllListeners();
+    }
+
     #region EDITOR
     public virtual void Reset()
     {
