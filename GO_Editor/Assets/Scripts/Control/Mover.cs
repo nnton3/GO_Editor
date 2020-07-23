@@ -112,7 +112,7 @@ public class Mover : MonoBehaviour
         }
     }
 
-    protected void UpdateCurrentNode()
+    public void UpdateCurrentNode()
     {
         if (board == null) return;
         currentNode = board.FindNodeAt(transform.position);
@@ -133,7 +133,7 @@ public class Mover : MonoBehaviour
             "time", rotateTime));
     }
 
-    private void OnDestroy()
+    protected virtual void OnDestroy()
     {
         FinishMovementEvent.RemoveAllListeners();
     }

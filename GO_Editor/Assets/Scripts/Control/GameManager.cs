@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
     private bool hasLevelFinishing = false;
     public bool HasLevelFinishing => hasLevelFinishing;
 
-    [SerializeField] private float delay = 1f;
+    [SerializeField] protected float delay = 1f;
 
     [HideInInspector] public static UnityEvent LoseLevelEvent;
     [HideInInspector] public UnityEvent StartLevelEvent;
@@ -41,7 +41,13 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public static NodeEvent RaiseAlarmEvent = new NodeEvent();
     #endregion
 
-    public void Initialize()
+    private void Awake()
+    {
+        RaiseAlarmEvent.AddListener(RaiseAlarm);
+        BoardUpdatedEvent.AddListener(UpdateEnemiesPath);
+    }
+
+    public virtual void Initialize()
     {
         board = FindObjectOfType<Board>();
         player = FindObjectOfType<PlayerManager>();
@@ -49,9 +55,6 @@ public class GameManager : MonoBehaviour
 
         EnemyManager[] enemiesArray = FindObjectsOfType<EnemyManager>() as EnemyManager[];
         enemies = enemiesArray.ToList();
-
-        RaiseAlarmEvent.AddListener(RaiseAlarm);
-        BoardUpdatedEvent.AddListener(UpdateEnemiesPath);
     }
 
     public void StartLoop()
@@ -79,7 +82,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator RunGameLoop()
     {
         yield return StartCoroutine("StartLevelRoutine");
-        yield return StartCoroutine("PlayerLevelRoutine");
+        yield return StartCoroutine("PlayLevelRoutine");
         yield return StartCoroutine("EndLevelRoutine");
     }
 
@@ -93,7 +96,7 @@ public class GameManager : MonoBehaviour
         StartLevelEvent?.Invoke();
     }
 
-    protected virtual IEnumerator PlayerLevelRoutine()
+    protected virtual IEnumerator PlayLevelRoutine()
     {
         isGamePlaying = true;
         yield return new WaitForSeconds(delay);
@@ -153,14 +156,11 @@ public class GameManager : MonoBehaviour
     {
         currentTurn = Turn.Player;
         player.IsTurnComplete = false;
-        Debug.Log($"start new player turn, {player.IsTurnComplete}");
         player.PlayerInput.InputEnabled = true;
     }
 
     private void PlayEnemiesTurn()
     {
-        Debug.Log($"start new enemies turn, {player.IsTurnComplete}");
-
         currentTurn = Turn.Enemy;
 
         foreach (var enemy in enemies)
@@ -175,6 +175,7 @@ public class GameManager : MonoBehaviour
     {
         foreach (var enemy in enemies)
         {
+            Debug.Log($"{enemy.name} is finish? {enemy.IsTurnComplete}");
             if (!enemy.IsTurnComplete) return false;
         }
         return true;
@@ -184,16 +185,20 @@ public class GameManager : MonoBehaviour
     {
         if (currentTurn == Turn.Player && player != null)
         {
-            if (player.IsTurnComplete) PlayEnemiesTurn();
+            if (player.IsTurnComplete)
+                PlayEnemiesTurn();
         }
         else if (currentTurn == Turn.Enemy)
         {
-            if (IsEnemyTurnCpmplete()) PlayPlayerTurn();
+            Debug.Log($"is enemy turn complete?");
+            if (IsEnemyTurnCpmplete())
+                PlayPlayerTurn();
         }
     }
 
     public void Reset()
     {
+        enemies.Clear();
         StopAllCoroutines();
         hasLevelStarted = false;
         isGamePlaying = false;

@@ -24,7 +24,7 @@ public class ModeController : MonoBehaviour
         gameManager = FindObjectOfType<GameManager>();
         player = FindObjectOfType<PlayerManager>();
         board = FindObjectOfType<Board>();
-        if (initializer == null) Debug.Log("Editor initializer is lost");
+        if (initializer == null) Debug.LogWarning("Editor initializer is lost");
     }
 
     public void EnableTestMode()
@@ -36,12 +36,12 @@ public class ModeController : MonoBehaviour
         initializer.InitializeGameTarget();
         initializer.InitializeEnemies();
         board.UpdatePlayerNode();
-        player.GetComponent<PlayerMover>().Reset();
+        player.GetComponent<PlayerMover>().UpdateCurrentNode();
         initializer.StartGame();
         gameManager.PlayLevel();
     }
 
-    public void EnableEditorMode()
+    public void EnableEditMode()
     {
         CurrentMode = Mode.Editor;
 

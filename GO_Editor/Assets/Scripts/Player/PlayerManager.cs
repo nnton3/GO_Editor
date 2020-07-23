@@ -24,13 +24,17 @@ public class PlayerManager : TurnManager
     public override void Initialize()
     {
         base.Initialize();
-        board = FindObjectOfType<Board>();
         playerMover = GetComponent<PlayerMover>();
         playerInput = GetComponent<PlayerInput>();
         playerDeath = GetComponent<PlayerDeath>();
 
-        if (playerMover != null) playerMover.FinishMovementEvent.AddListener(() => FinishTurn());
+        if (playerMover != null) playerMover.FinishMovementEvent.AddListener(() =>
+        {
+            Debug.Log("player finish");
+            FinishTurn();
+        });
         if (playerDeath != null) DeathEvent.AddListener(playerDeath.Die);
+        board = FindObjectOfType<Board>();
         isInitialized = true;
     }
 
@@ -134,7 +138,6 @@ public class PlayerManager : TurnManager
 
     public override void FinishTurn()
     {
-        Debug.Log("turn is finished");
         if (playerMover.CurrentNode.Type == NodeType.Stone)
         {
             playerInput.InputEnabled = false;
@@ -146,13 +149,7 @@ public class PlayerManager : TurnManager
             StartCoroutine(CaptureEnemies());
         }
         else
-        {
-            IsTurnComplete = true;
-            Debug.Log($"player is complete turn? {IsTurnComplete}");
-            if (gameManager == null) return;
-            gameManager.UpdateTurn();
-            //base.FinishTurn();
-        }
+            base.FinishTurn();
     }
 
     private IEnumerator ReliseStone()
@@ -233,11 +230,17 @@ public class PlayerManager : TurnManager
     // EDITOR
     public void Reset()
     {
+        StopAllCoroutines();
+        DeathEvent.RemoveAllListeners();
         patrons = 2;
         transform.position = playerMover.StartPos;
         transform.rotation = playerMover.StartRot;
         GetComponent<PlayerInventory>().Reset();
-        playerMover.Reset();
         playerDeath.Anim.SetTrigger("reset");
+    }
+
+    private void OnDestroy()
+    {
+        DeathEvent.RemoveAllListeners();
     }
 }

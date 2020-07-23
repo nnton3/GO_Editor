@@ -34,6 +34,7 @@ public class EnemieMover : Mover
         startRotation = transform.rotation;
         wpmanager = FindObjectOfType<WPManager>();
         sensor = GetComponent<EnemySensor>();
+        Debug.Log("add listener");
         GetComponent<EnemyManager>().DeathEvent.AddListener(() => currentNode = null);
     }
 

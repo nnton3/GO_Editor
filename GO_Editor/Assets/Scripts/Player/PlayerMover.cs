@@ -37,9 +37,4 @@ public class PlayerMover : Mover
             yield return new WaitForSeconds(1f);
         }
     }
-
-    public void Reset()
-    {
-        UpdateCurrentNode();
-    }
 }
