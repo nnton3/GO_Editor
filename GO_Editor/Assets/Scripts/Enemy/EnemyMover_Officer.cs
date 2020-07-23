@@ -39,15 +39,12 @@ public class EnemyMover_Officer : EnemieMover
     private IEnumerator SquarePatrolRoutine()
     {
         var startPos = transform.position;
-        Debug.Log($"{startPos} = {waypoints[currentTargetWaypoint]}? {waypoints[currentTargetWaypoint] == startPos}");
         if (Vector3.Distance(waypoints[currentTargetWaypoint], startPos) < .1f)
         {
-            Debug.Log("work");
             SetTargetPoint();
             sensor.UpdateSensor();
             yield return new WaitForSeconds(rotateTime);
         }
-        Debug.Log($"{waypoints[currentTargetWaypoint]} current target");
 
         var newDest = startPos + transform.TransformVector(directionToMove);
 
