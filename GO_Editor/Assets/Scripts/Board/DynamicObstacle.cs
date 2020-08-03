@@ -40,7 +40,6 @@ public class DynamicObstacle : MonoBehaviour
 
     public virtual void OpenPath()
     {
-        Debug.Log("open");
         point1.AddLink(point2);
         obstacle.GetComponent<Collider>().enabled = false;
         wpmanager.UpdateGraph();
@@ -53,7 +52,6 @@ public class DynamicObstacle : MonoBehaviour
 
     public virtual void ClosePath()
     {
-        Debug.Log("close");
         point1.RemoveLink(point2);
         obstacle.GetComponent<Collider>().enabled = true;
         wpmanager.UpdateGraph();
@@ -62,11 +60,6 @@ public class DynamicObstacle : MonoBehaviour
 
         if (rotator != null)
             rotator.Close();
-    }
-
-    public void DeleteObstacle()
-    {
-
     }
 
     // EDITOR FUNCTIONS
