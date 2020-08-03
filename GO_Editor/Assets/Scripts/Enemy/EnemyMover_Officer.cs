@@ -17,12 +17,14 @@ public struct PatrolData
 
 public class EnemyMover_Officer : EnemieMover
 {
+    #region Variables
     [SerializeField] private bool loop;
     [SerializeField] private List<Vector3> waypoints;
     public List<Vector3> Waypoints => waypoints;
     [SerializeField] private PatrolData checkPatrol;
     public PatrolData PatrolDataValue => checkPatrol;
     private int currentTargetWaypoint = 1;
+    #endregion
 
     public override void MoveOneTurn()
     {
@@ -39,15 +41,16 @@ public class EnemyMover_Officer : EnemieMover
     private IEnumerator SquarePatrolRoutine()
     {
         var startPos = transform.position;
-        Debug.Log($"{startPos} = {waypoints[currentTargetWaypoint]}? {waypoints[currentTargetWaypoint] == startPos}");
+
         if (Vector3.Distance(waypoints[currentTargetWaypoint], startPos) < .1f)
         {
-            Debug.Log("work");
-            SetTargetPoint();
             sensor.UpdateSensor();
+            if (sensor.FoundPlayer)
+                yield return StartCoroutine(GetComponent<EnemyManager>().Kill());
+
+            SetTargetPoint();
             yield return new WaitForSeconds(rotateTime);
         }
-        Debug.Log($"{waypoints[currentTargetWaypoint]} current target");
 
         var newDest = startPos + transform.TransformVector(directionToMove);
 
@@ -80,9 +83,8 @@ public class EnemyMover_Officer : EnemieMover
                 var tempList = new List<Vector3>();
 
                 for (int i = waypoints.Count - 1; i >= 0; i--)
-                {
                     tempList.Add(waypoints[i]);
-                }
+
                 waypoints = tempList;
                 currentTargetWaypoint = 1;
             }
@@ -99,8 +101,6 @@ public class EnemyMover_Officer : EnemieMover
         
         var node = board.FindNodeAt(checkPatrol.Position);
         var enemies = board.FindEnemiesAt(node);
-        foreach (var item in enemies)
-            Debug.Log(item.name);
 
         foreach (var enemy in enemies)
             if (enemy.gameObject == checkPatrol.Enemy) return;

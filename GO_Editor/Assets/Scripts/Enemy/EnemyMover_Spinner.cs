@@ -35,5 +35,11 @@ public class EnemyMover_Spinner : EnemieMover
         FaceDestination();
 
         yield return new WaitForSeconds(rotateTime);
+        
+        sensor.UpdateSensor();
+        if (sensor.FoundPlayer)
+            StartCoroutine(GetComponent<EnemyManager>().Kill());
+        else
+            GetComponent<EnemyManager>().FinishTurn();
     }
 }

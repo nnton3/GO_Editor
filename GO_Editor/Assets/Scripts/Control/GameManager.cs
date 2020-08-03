@@ -174,10 +174,8 @@ public class GameManager : MonoBehaviour
     private bool IsEnemyTurnCpmplete()
     {
         foreach (var enemy in enemies)
-        {
-            Debug.Log($"{enemy.name} is finish? {enemy.IsTurnComplete}");
             if (!enemy.IsTurnComplete) return false;
-        }
+
         return true;
     }
 
@@ -190,7 +188,6 @@ public class GameManager : MonoBehaviour
         }
         else if (currentTurn == Turn.Enemy)
         {
-            Debug.Log($"is enemy turn complete?");
             if (IsEnemyTurnCpmplete())
                 PlayPlayerTurn();
         }

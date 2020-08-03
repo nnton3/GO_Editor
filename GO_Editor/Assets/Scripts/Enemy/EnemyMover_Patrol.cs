@@ -20,9 +20,7 @@ public class EnemyMover_Patrol : EnemieMover
         var startPos = new Vector3(currentNode.Coordinate.x, 0f, currentNode.Coordinate.y);
         var newDest = startPos + transform.TransformVector(directionToMove);
 
-        var startNode = board.FindNodeAt(startPos);
-        var nextNode = board.FindNodeAt(newDest);
-        if (nextNode == null || !startNode.LinkedNodes.Find(n => n.Coordinate == nextNode.Coordinate))
+        if (!HaveLink(newDest))
         {
             newDest = startPos - transform.TransformVector(directionToMove);
             destination = newDest;
@@ -44,5 +42,15 @@ public class EnemyMover_Patrol : EnemieMover
 
             base.FinishMovementEvent?.Invoke();
         }
+    }
+
+    protected override void ReturnToStartState()
+    {
+        ToDefaultState();
+    }
+
+    protected override void ToDefaultState()
+    {
+        state = EnemyState.Defaul;
     }
 }

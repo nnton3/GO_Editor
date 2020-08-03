@@ -39,12 +39,17 @@ public class SavingSystem : MonoBehaviour
     #region Saving
     public void Save()
     {
-        SaveLinks();
-        SavePlayer();
-        SaveObjects();
-        SaveObstacles();
-        SaveEnemies();
-        WriteLevelData();
+        if (ConfigPath == null)
+            Debug.LogWarning("Path to save is not valid!");
+        else
+        {
+            SaveLinks();
+            SavePlayer();
+            SaveObjects();
+            SaveObstacles();
+            SaveEnemies();
+            WriteLevelData();
+        }
     }
 
     private void SaveLinks()
@@ -99,10 +104,8 @@ public class SavingSystem : MonoBehaviour
     private void SaveBushes()
     {
         levelData.bushes.Clear();
-        //Debug.Log(GameObject.FindGameObjectsWithTag("Bush").Length);
         foreach (var bush in GameObject.FindGameObjectsWithTag("Bush"))
             levelData.bushes.Add(new BushData(bush.transform.position));
-        //Debug.Log($"U save {levelData.bushes.Count} bushes");
     }
 
     private void SaveDoors()
@@ -267,7 +270,18 @@ public class SavingSystem : MonoBehaviour
     #region Loading
     public void StartLoad()
     {
-        StartCoroutine(LoadRoutine());
+        if (ConfigPath == null)
+            Debug.LogWarning("Path to load is not valid!");
+        else
+            StartCoroutine(LoadRoutine());
+    }
+
+    private IEnumerator LoadRoutine()
+    {
+        ClearMap();
+        ReadLevelData();
+        yield return new WaitForSeconds(.5f);
+        Load();
     }
 
     public void Load()
@@ -277,14 +291,6 @@ public class SavingSystem : MonoBehaviour
         LoadObstacles();
         LoadEnemies();
         LoadPlayer();
-    }
-
-    private IEnumerator LoadRoutine()
-    {
-        ClearMap();
-        ReadLevelData();
-        yield return new WaitForSeconds(.5f);
-        Load();
     }
 
     private void LoadLinks()

@@ -17,16 +17,7 @@ public class EnemyMover_Kinolog : EnemyMover_Patrol
 
     protected override IEnumerator MoveToTargetRoutine()
     {
-        if (!NodeIsValid())
-        {
-            ReturnToStartState();
-            playerLost = true;
-            MoveToTarget();
-        }
-        else
-        {
-            AddPlayerStep();
-            yield return base.MoveToTargetRoutine();
-        }
+        AddPlayerStep();
+        yield return base.MoveToTargetRoutine();
     }
 }

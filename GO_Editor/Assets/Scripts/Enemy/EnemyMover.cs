@@ -29,12 +29,11 @@ public class EnemieMover : Mover
         base.Initialize();
         startNode = board.FindNodeAt(transform.position);
         if (startNode == null)
-            Debug.Log($"{gameObject.name} start node is lost");
+            Debug.LogWarning($"{gameObject.name} start node is lost");
 
         startRotation = transform.rotation;
         wpmanager = FindObjectOfType<WPManager>();
         sensor = GetComponent<EnemySensor>();
-        Debug.Log("add listener");
         GetComponent<EnemyManager>().DeathEvent.AddListener(() => currentNode = null);
     }
 
@@ -54,13 +53,14 @@ public class EnemieMover : Mover
 
     protected void SetPath(Board_Node node)
     {
+        pathToTarget.Clear();
         pathToTarget = wpmanager.GetPath(currentNode.gameObject, node.gameObject);
 
         if (PathIsValid())
             PrepareToMove();
     }
 
-    protected void ReturnToStartState()
+    protected virtual void ReturnToStartState()
     {
         if (startNode == currentNode) return;
         SetPath(startNode);
@@ -89,12 +89,8 @@ public class EnemieMover : Mover
 
     protected virtual IEnumerator MoveToTargetRoutine()
     {
-        if (!NodeIsValid())
-        {
-            ReturnToStartState();
-            playerLost = true;
-            MoveToTarget();
-        }
+        if (!HaveLink(pathToTarget[currentPathIndex].transform.position))
+            LostPlayer();
         else
         {
             var startPos = new Vector3(currentNode.Coordinate.x, 0f, currentNode.Coordinate.y);
@@ -116,19 +112,32 @@ public class EnemieMover : Mover
                 while (isMoving)
                     yield return null;
 
-                currentPathIndex++;
-
-                if (currentPathIndex >= pathToTarget.Count)
-                {
-                    if (state == EnemyState.Alarm)
-                        ReturnToStartState();
-                    else if (state == EnemyState.ReturnToStart)
-                        ToDefaultState();
-                }
+                IncrementPathIndex();
 
                 base.FinishMovementEvent.Invoke();
             }
         }
+    }
+
+    protected void IncrementPathIndex()
+    {
+        if (currentNode.Type == NodeType.Lever) return;
+
+        currentPathIndex++;
+        if (currentPathIndex >= pathToTarget.Count)
+        {
+            if (state == EnemyState.Alarm)
+                ReturnToStartState();
+            else if (state == EnemyState.ReturnToStart)
+                ToDefaultState();
+        }
+    }
+
+    protected void LostPlayer()
+    {
+        ReturnToStartState();
+        playerLost = true;
+        MoveToTarget();
     }
 
     public void UpdatePathToTarget()
@@ -156,16 +165,14 @@ public class EnemieMover : Mover
         return board.FindNodeAt(pathToTarget[1].transform.position).LinkedNodes.Contains(currentNode);
     }
 
-    protected bool NodeIsValid()
+    protected bool HaveLink(Vector3 nodePos)
     {
-        var nextNode = board.FindNodeAt(pathToTarget[currentPathIndex].transform.position);
+        var nextNode = board.FindNodeAt(nodePos);
         if (nextNode == null)
         {
-            Debug.Log("Node is not valid");
+            Debug.LogWarning("Node is not valid");
             return false;
         }
-        var link = currentNode.LinkedNodes.Find(n => n == nextNode);
-        if (link == null) return false;
-        else return true;
+        return currentNode.LinkedNodes.Find(n => n == nextNode);
     }
 }

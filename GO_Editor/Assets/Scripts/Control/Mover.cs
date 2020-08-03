@@ -19,7 +19,7 @@ public class Mover : MonoBehaviour
     protected Board_Node currentNode;
     public Board_Node CurrentNode => currentNode;
 
-    public UnityEvent FinishMovementEvent;
+    [HideInInspector] public UnityEvent FinishMovementEvent;
     #endregion
 
     public virtual void Initialize()

@@ -30,7 +30,6 @@ public class PlayerManager : TurnManager
 
         if (playerMover != null) playerMover.FinishMovementEvent.AddListener(() =>
         {
-            Debug.Log("player finish");
             FinishTurn();
         });
         if (playerDeath != null) DeathEvent.AddListener(playerDeath.Die);
