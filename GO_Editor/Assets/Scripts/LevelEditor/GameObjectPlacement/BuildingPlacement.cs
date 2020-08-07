@@ -7,7 +7,7 @@ using UnityEngine;
 public class BuildingPlacement : MonoBehaviour
 {
     [SerializeField] private GameObject floorPref;
-    [SerializeField] private GameObject stairsPref;
+    [SerializeField] private GameObject elevatorPref;
 
     private EditorSelector selector;
     private Board board;
@@ -38,7 +38,7 @@ public class BuildingPlacement : MonoBehaviour
             });
     }
 
-    private GameObject PlaceFloor(GameObject point)
+    public GameObject PlaceFloor(GameObject point)
     {
         var instance = Instantiate(floorPref, point.transform.position, Quaternion.identity);
         point.transform.position += Vector3.up;
@@ -56,7 +56,7 @@ public class BuildingPlacement : MonoBehaviour
     #endregion
 
     #region Stairs
-    public void AddStairs()
+    public void AddElevator()
     {
         LevelInitializer.StartAddObjEvent.Invoke();
 
@@ -64,26 +64,26 @@ public class BuildingPlacement : MonoBehaviour
             .FromCoroutine(() => selector.SelectNodeRoutine("Select node to place building block"))
             .Subscribe(_ =>
             {
-                PlaceStairs(selector.Nodes[0]);
+                PlaceElevator(selector.Nodes[0]);
                 selector.Reset();
                 LevelInitializer.EndAddObjEvent?.Invoke();
             });
     }
 
-    private GameObject PlaceStairs(GameObject point)
+    public GameObject PlaceElevator(GameObject point, Quaternion rotation = new Quaternion())
     {
-        var instance = Instantiate(stairsPref, point.transform.position, Quaternion.identity);
+        var instance = Instantiate(elevatorPref, point.transform.position, rotation);
         point.transform.position += Vector3.up/2;
 
         return instance;
     }
 
-    public void DeleteStairs(GameObject stairs)
+    public void DeleteElevator(GameObject elevator)
     {
-        var node = FindObjectOfType<Board>().FindNodeAt(stairs.transform.position);
+        var node = FindObjectOfType<Board>().FindNodeAt(elevator.transform.position);
         node.transform.position -= Vector3.up / 2;
 
-        Destroy(stairs);
+        Destroy(elevator);
     }
     #endregion
 }

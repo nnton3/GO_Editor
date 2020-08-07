@@ -11,6 +11,7 @@ public class SavingSystem : MonoBehaviour
     private ObstaclePlacement obstaclePlacement;
     private ObjectPlacement objectPlacement;
     private EnemyPlacement enemyPlacement;
+    private BuildingPlacement buildingPlacement;
     private LevelInitializer levelInitializer;
     private JsonLevelData levelData = new JsonLevelData();
 
@@ -34,6 +35,9 @@ public class SavingSystem : MonoBehaviour
 
         levelInitializer = GetComponent<LevelInitializer>();
         if (levelInitializer == null) Debug.Log("Level initializer is lost");
+
+        buildingPlacement = GetComponent<BuildingPlacement>();
+        if (buildingPlacement == null) Debug.Log("Building placement is lost");
     }
 
     #region Saving
@@ -48,6 +52,7 @@ public class SavingSystem : MonoBehaviour
             SaveObjects();
             SaveObstacles();
             SaveEnemies();
+            SaveBuildingBlocks();
             WriteLevelData();
         }
     }
@@ -171,6 +176,23 @@ public class SavingSystem : MonoBehaviour
                     enemy.transform.rotation));
         }
     }
+
+    private void SaveBuildingBlocks()
+    {
+        levelData.blocks.Clear();
+        foreach (var block in FindObjectsOfType<BuildingBlock>())
+            switch (block.BlockType)
+            {
+                case BuildingBlockType.Default:
+                    levelData.blocks.Add(new BuildingBlockData(block.transform.position, block.BlockType));
+                    break;
+                case BuildingBlockType.Elevator:
+                    levelData.blocks.Add(new BuildingBlockData(block.transform.position, block.BlockType, block.transform.rotation));
+                    break;
+                default:
+                    break;
+            }
+    }
     #endregion
 
     #region ClearMap
@@ -180,6 +202,7 @@ public class SavingSystem : MonoBehaviour
         DeleteObjects();
         DeleteEnemies();
         DeleteLinks();
+        DeleteBuildingBlocks();
     }
 
     private void DeleteObjects()
@@ -265,6 +288,22 @@ public class SavingSystem : MonoBehaviour
                 if (node.GetComponent<BarbedWire>())
                     obstaclePlacement.DeleteObstacle(node);
     }
+
+    private void DeleteBuildingBlocks()
+    {
+        foreach (var block in FindObjectsOfType<BuildingBlock>())
+            switch (block.BlockType)
+            {
+                case BuildingBlockType.Default:
+                    buildingPlacement.DeleteFloor(block.gameObject);
+                    break;
+                case BuildingBlockType.Elevator:
+                    buildingPlacement.DeleteElevator(block.gameObject);
+                    break;
+                default:
+                    break;
+            }
+    }
     #endregion
 
     #region Loading
@@ -291,6 +330,7 @@ public class SavingSystem : MonoBehaviour
         LoadObstacles();
         LoadEnemies();
         LoadPlayer();
+        LoadBuildingBlocks();
     }
 
     private void LoadLinks()
@@ -484,6 +524,22 @@ public class SavingSystem : MonoBehaviour
                     targetEnemy.transform.rotation = target.rotation;
             }
         }
+    }
+
+    private void LoadBuildingBlocks()
+    {
+        foreach (var target in levelData.blocks)
+            switch (target.blockType)
+            {
+                case BuildingBlockType.Default:
+                    buildingPlacement.PlaceFloor(board.FindNodeAt(target.pos).gameObject);
+                    break;
+                case BuildingBlockType.Elevator:
+                    buildingPlacement.PlaceElevator(board.FindNodeAt(target.pos).gameObject, target.rot);
+                    break;
+                default:
+                    break;
+            }
     }
     #endregion
 

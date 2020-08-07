@@ -18,7 +18,7 @@ public class EnemySensor_Raycast : EnemySensor
         if (board == null) return;
         
         RaycastHit raycastHit;
-        var ray = new Ray(transform.position + new Vector3(0f, .6f, 0f), transform.TransformVector(directionToSearch));
+        var ray = new Ray(transform.position + new Vector3(0f, 1.6f, 0f), transform.TransformVector(directionToSearch));
         if (Physics.Raycast(ray, out raycastHit, sensorDistance))
             if (raycastHit.transform.GetComponent<PlayerManager>())
                 if (board.PlayerNode.Type != NodeType.Bush)

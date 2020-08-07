@@ -12,4 +12,5 @@ class JsonLevelData
     public PlayerData player = new PlayerData();
     public List<NodeData> nodes = new List<NodeData>();
     public List<BushData> bushes = new List<BushData>();
+    public List<BuildingBlockData> blocks = new List<BuildingBlockData>();
 }
