@@ -148,3 +148,18 @@ public struct SpotlightData
         rotation = _rotation;
     }
 }
+
+[System.Serializable]
+public struct BuildingBlockData
+{
+    public Vector3 pos;
+    public Quaternion rot;
+    public BuildingBlockType blockType;
+
+    public BuildingBlockData(Vector3 _pos, BuildingBlockType type, Quaternion _rot = new Quaternion())
+    {
+        pos = _pos;
+        blockType = type;
+        rot = _rot;
+    }
+}

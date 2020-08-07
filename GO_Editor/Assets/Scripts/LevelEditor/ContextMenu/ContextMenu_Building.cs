@@ -11,7 +11,7 @@ public class ContextMenu_Building : ContextMenu
 
     public void DeleteStairs()
     {
-        FindObjectOfType<BuildingPlacement>().DeleteStairs(transform.parent.gameObject);
+        FindObjectOfType<BuildingPlacement>().DeleteElevator(transform.parent.gameObject);
     }
 
     public void DeleteLadder() { }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class EditorSelector : MonoBehaviour
 {
+    #region Variables
     private List<GameObject> nodes = new List<GameObject>();
     public List<GameObject> Nodes => nodes;
     private GameObject node1;
@@ -13,6 +14,7 @@ public class EditorSelector : MonoBehaviour
 
     private bool selected;
     private EditorRaycaster raycaster;
+    #endregion
 
     private void Awake()
     {
