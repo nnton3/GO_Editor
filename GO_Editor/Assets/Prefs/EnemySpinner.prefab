@@ -177,6 +177,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sensorDistance: 9
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 7987
 --- !u!114 &8486805354631111473
 MonoBehaviour:
   m_ObjectHideFlags: 0

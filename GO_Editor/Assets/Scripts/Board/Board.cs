@@ -79,7 +79,7 @@ public class Board : MonoBehaviour
 
         foreach (var enemy in enemies)
         {
-            var mover = enemy.GetComponent<EnemieMover>();
+            var mover = enemy.GetComponent<EnemyMover>();
             if (mover.CurrentNode == node)
                 foundEnemies.Add(enemy);
         }

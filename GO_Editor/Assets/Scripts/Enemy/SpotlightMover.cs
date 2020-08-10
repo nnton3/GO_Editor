@@ -1,7 +1,7 @@
 ﻿ using System.Collections;
 using UnityEngine;
 
-public class SpotlightMover : EnemieMover
+public class SpotlightMover : EnemyMover
 {
     [SerializeField] private Vector3 startPoint;
     public Vector3 StartPoint => startPoint;
@@ -33,7 +33,9 @@ public class SpotlightMover : EnemieMover
             yield return new WaitForSeconds(rotateTime);
         }
 
-        CheckPlayer();
+        sensor.UpdateSensor();
+        if (sensor.FoundPlayer)
+            GameManager.RaiseAlarmEvent?.Invoke(currentNode);
         
         base.FinishMovementEvent.Invoke();
     }
@@ -45,14 +47,6 @@ public class SpotlightMover : EnemieMover
         if (targetNode == null) return;
         if (currentNode == null) return;
         StartCoroutine(MoveRoutine(destinationPos, delayTime));
-    }
-
-    private void CheckPlayer()
-    {
-        if (board == null) return;
-
-        if (transform.position == board.PlayerNode.transform.position)
-            GameManager.RaiseAlarmEvent?.Invoke(currentNode);
     }
 
     // EDITOR

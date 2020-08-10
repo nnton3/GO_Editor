@@ -204,7 +204,6 @@ public class ObstaclePlacement : MonoBehaviour
     public void PlaceSpotlight(GameObject point1, GameObject point2, Quaternion rotation = new Quaternion())
     {
         var spotlightInstance = Instantiate(spotlightPref, point1.transform.position, rotation);
-        Debug.Log($"set point {point1.transform.position}, set point {point2.transform.position}");
         spotlightInstance.GetComponent<SpotlightMover>().SetMovementParams(point1.transform.position, point2.transform.position);
         spotlightInstance.transform.rotation = rotation;
     }

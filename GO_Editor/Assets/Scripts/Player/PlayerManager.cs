@@ -189,7 +189,7 @@ public class PlayerManager : TurnManager
         {
             var enemies = board.FindEnemiesAt(n);
             foreach (var enemy in enemies)
-                enemy.GetComponent<EnemieMover>().ToAlarmState(node);
+                enemy.GetComponent<EnemyMover>().ToAlarmState(node);
         }
 
         stoneRelised = true;
@@ -207,9 +207,9 @@ public class PlayerManager : TurnManager
     {
         if (enemy == null) return false;
         if (enemy.GetComponent<SpotlightManager>()) return false;
-        if (enemy.GetComponent<EnemieMover>().CurrentNode.Type == NodeType.Bush) return false;
+        if (enemy.GetComponent<EnemyMover>().CurrentNode.Type == NodeType.Bush) return false;
         if (Vector3.Distance(playerMover.CurrentNode.transform.position,
-                            enemy.GetComponent<EnemieMover>().CurrentNode.transform.position) > (Board.spacing * 2))
+                            enemy.GetComponent<EnemyMover>().CurrentNode.transform.position) > (Board.spacing * 2))
             return false;
         
         RaycastHit raycastHit;

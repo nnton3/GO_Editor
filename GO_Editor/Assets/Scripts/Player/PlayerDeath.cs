@@ -10,7 +10,6 @@ public class PlayerDeath : MonoBehaviour
     public void Die()
     {
         if (anim == null) return;
-        Debug.Log("Is dead");
         anim.ResetTrigger("reset");
         anim.SetTrigger("isDead");
     }

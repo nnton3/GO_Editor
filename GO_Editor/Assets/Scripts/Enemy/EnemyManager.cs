@@ -13,13 +13,13 @@ public enum EnemyIdentifier
     Liquidator
 }
 
-[RequireComponent(typeof(EnemieMover))]
+[RequireComponent(typeof(EnemyMover))]
 [RequireComponent(typeof(EnemySensor))]
 [RequireComponent(typeof(EnemyAttack))]
 public class EnemyManager : TurnManager
 {
     #region Variables
-    protected EnemieMover enemyMover;
+    protected EnemyMover enemyMover;
     private EnemySensor enemieSensor;
     protected EnemyAttack enemyAttack;
     private Board board;
@@ -35,7 +35,7 @@ public class EnemyManager : TurnManager
     {
         base.Initialize();
         board = FindObjectOfType<Board>();
-        enemyMover = GetComponent<EnemieMover>();
+        enemyMover = GetComponent<EnemyMover>();
         enemieSensor = GetComponent<EnemySensor>();
         enemyAttack = GetComponent<EnemyAttack>();
 

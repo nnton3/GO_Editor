@@ -62,10 +62,15 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7644160209214019235, guid: 10bcfad0d2f43a94ebd6e7b3f41c3784,
+        type: 3}
+      propertyPath: targetLayer.m_Bits
+      value: 7987
+      objectReference: {fileID: 0}
     - target: {fileID: 7644160209214019247, guid: 10bcfad0d2f43a94ebd6e7b3f41c3784,
         type: 3}
       propertyPath: m_Name
-      value: Editor_EnemyPatrol Variant
+      value: Editor_EnemyPatrol
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 10bcfad0d2f43a94ebd6e7b3f41c3784, type: 3}

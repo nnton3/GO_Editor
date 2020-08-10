@@ -18,12 +18,12 @@ public class EnemySensor_Kinolog : EnemySensor
 
     private void RaiseAlarmAround()
     {
-        foreach (var node in GetComponent<EnemieMover>().CurrentNode.NeighborNodes)
+        foreach (var node in GetComponent<EnemyMover>().CurrentNode.NeighborNodes)
         {
             var enemies = board.FindEnemiesAt(node);
             if (enemies.Count != 0)
             {
-                GameManager.RaiseAlarmEvent?.Invoke(GetComponent<EnemieMover>().CurrentNode);
+                GameManager.RaiseAlarmEvent?.Invoke(GetComponent<EnemyMover>().CurrentNode);
                 return;
             }
         }

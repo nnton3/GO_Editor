@@ -281,6 +281,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sensorDistance: 9
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 7987
 --- !u!65 &7678407732205447899
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -10,7 +10,7 @@ PrefabInstance:
     - target: {fileID: 3043728195432312480, guid: 44075d1cbefc5cf46b2cceefa2dc4d00,
         type: 3}
       propertyPath: m_Name
-      value: Editor_EnemySentry Variant
+      value: Editor_EnemySentry
       objectReference: {fileID: 0}
     - target: {fileID: 3043728195432312493, guid: 44075d1cbefc5cf46b2cceefa2dc4d00,
         type: 3}
@@ -66,6 +66,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744889022465603897, guid: 44075d1cbefc5cf46b2cceefa2dc4d00,
+        type: 3}
+      propertyPath: targetLayer.m_Bits
+      value: 7987
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 44075d1cbefc5cf46b2cceefa2dc4d00, type: 3}

@@ -2,7 +2,7 @@
 using System.Collections;
 using UniRx;
 
-public class EnemyMover_Spinner : EnemieMover
+public class EnemyMover_Spinner : EnemyMover
 {
     public override void MoveOneTurn()
     {
