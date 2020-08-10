@@ -15,7 +15,7 @@ public struct PatrolData
     }
 }
 
-public class EnemyMover_Officer : EnemieMover
+public class EnemyMover_Officer : EnemyMover
 {
     #region Variables
     [SerializeField] private bool loop;

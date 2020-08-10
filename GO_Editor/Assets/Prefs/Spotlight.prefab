@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6851269196029450860}
   - component: {fileID: 6027545987524159715}
   - component: {fileID: 5037530987317588988}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Spotlight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -123,7 +123,7 @@ GameObject:
   - component: {fileID: 53116914107881580}
   - component: {fileID: 4476433051940362929}
   - component: {fileID: 2651722799987332955}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: LightTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}

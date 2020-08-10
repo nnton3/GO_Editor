@@ -68,7 +68,7 @@ public class GameManager : MonoBehaviour
     {
         foreach (var enemy in enemies)
             if (!enemy.IsDead)
-                enemy.GetComponent<EnemieMover>().UpdatePathToTarget();
+                enemy.GetComponent<EnemyMover>().UpdatePathToTarget();
     }
 
     private void RaiseAlarm(Board_Node alarmSource)
@@ -76,7 +76,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("ALARM");
         foreach (var enemy in enemies)
             if (!enemy.IsDead)
-                enemy.GetComponent<EnemieMover>().ToAlarmState(alarmSource);
+                enemy.GetComponent<EnemyMover>().ToAlarmState(alarmSource);
     }
 
     private IEnumerator RunGameLoop()

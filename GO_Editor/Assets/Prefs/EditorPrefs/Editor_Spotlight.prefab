@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3758555947664764745}
   - component: {fileID: 3758555947664764744}
   - component: {fileID: 3758555947664764751}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: ExitButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -142,7 +142,7 @@ GameObject:
   - component: {fileID: 3758555947752873002}
   - component: {fileID: 3758555947752873001}
   - component: {fileID: 3758555947752873000}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: ContexMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -252,7 +252,7 @@ GameObject:
   - component: {fileID: 3758555947772150765}
   - component: {fileID: 3758555947772150767}
   - component: {fileID: 3758555947772150766}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -331,7 +331,7 @@ GameObject:
   - component: {fileID: 3758555948513909811}
   - component: {fileID: 3758555948513909810}
   - component: {fileID: 3758555948513909809}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: RotateButton1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -460,7 +460,7 @@ GameObject:
   - component: {fileID: 3758555948954433913}
   - component: {fileID: 3758555948954433912}
   - component: {fileID: 3758555948954433919}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: DeleteButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -589,7 +589,7 @@ GameObject:
   - component: {fileID: 3758555949174817487}
   - component: {fileID: 3758555949174817486}
   - component: {fileID: 3758555949174817485}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: RotateBtn2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -718,7 +718,7 @@ GameObject:
   - component: {fileID: 1875081215786985788}
   - component: {fileID: 350777851334825285}
   - component: {fileID: 5787933696079439992}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -875,7 +875,7 @@ PrefabInstance:
     - target: {fileID: 4791034589875438432, guid: 0993a801b01d71341b11c265ecaae8a5,
         type: 3}
       propertyPath: m_Layer
-      value: 9
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0993a801b01d71341b11c265ecaae8a5, type: 3}

@@ -136,6 +136,11 @@ PrefabInstance:
       propertyPath: sensorDistance
       value: 33
       objectReference: {fileID: 0}
+    - target: {fileID: 7160116852133266188, guid: 2d73c4cc0834bc240af36a6f9f6d623c,
+        type: 3}
+      propertyPath: targetLayer.m_Bits
+      value: 7987
+      objectReference: {fileID: 0}
     - target: {fileID: 8242232217356872645, guid: 2d73c4cc0834bc240af36a6f9f6d623c,
         type: 3}
       propertyPath: m_Name

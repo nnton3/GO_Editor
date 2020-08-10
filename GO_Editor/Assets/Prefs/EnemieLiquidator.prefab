@@ -305,7 +305,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fb218b7c30b6244ab53476ffd846223, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTarget: 0
+  isMissionTarget: 0
   DeathEvent:
     m_PersistentCalls:
       m_Calls:
@@ -334,6 +334,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sensorDistance: 9
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 7987
 --- !u!114 &8090811242640278827
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class EnemyMover_Liquidator : EnemieMover
+public class EnemyMover_Liquidator : EnemyMover
 {
     private bool showUnit = false;
 

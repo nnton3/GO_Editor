@@ -44,5 +44,7 @@ public class ContextMenuController : MonoBehaviour
         }
         else if (raycaster.CheckRaycast(4096, "Building", out target))
             target.transform.Find("ContexMenu")?.gameObject.SetActive(true);
+        else if (raycaster.CheckRaycast(4, "Enemy", out target))
+            target.transform.Find("ContexMenu")?.gameObject.SetActive(true);
     }
 }

@@ -129,7 +129,12 @@ PrefabInstance:
     - target: {fileID: 818549985115531526, guid: fe387bc407a6f71429f94621b25bb7f8,
         type: 3}
       propertyPath: m_Name
-      value: Editor_EnemySpinner Variant
+      value: Editor_EnemySpinner
+      objectReference: {fileID: 0}
+    - target: {fileID: 818549985115531530, guid: fe387bc407a6f71429f94621b25bb7f8,
+        type: 3}
+      propertyPath: targetLayer.m_Bits
+      value: 7987
       objectReference: {fileID: 0}
     - target: {fileID: 818549985115531531, guid: fe387bc407a6f71429f94621b25bb7f8,
         type: 3}

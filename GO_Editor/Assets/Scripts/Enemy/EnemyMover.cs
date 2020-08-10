@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public enum EnemyState { Defaul, Alarm, ReturnToStart }
 
-public class EnemieMover : Mover
+public class EnemyMover : Mover
 {
     #region Variables
     protected Vector3 directionToMove = new Vector3(0f, 0f, Board.spacing);

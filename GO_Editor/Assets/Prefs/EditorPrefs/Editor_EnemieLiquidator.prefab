@@ -154,7 +154,7 @@ PrefabInstance:
     - target: {fileID: 7355915535546485969, guid: 870c925f86e02924f9664240c76d7f88,
         type: 3}
       propertyPath: m_Name
-      value: Editor_EnemieLiquidator Variant
+      value: Editor_EnemieLiquidator
       objectReference: {fileID: 0}
     - target: {fileID: 7355915535546485980, guid: 870c925f86e02924f9664240c76d7f88,
         type: 3}
@@ -210,6 +210,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7355915535546485981, guid: 870c925f86e02924f9664240c76d7f88,
+        type: 3}
+      propertyPath: targetLayer.m_Bits
+      value: 7987
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 870c925f86e02924f9664240c76d7f88, type: 3}

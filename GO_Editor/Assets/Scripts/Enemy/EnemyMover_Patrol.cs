@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EnemyMover_Patrol : EnemieMover
+public class EnemyMover_Patrol : EnemyMover
 {
     public override void MoveOneTurn()
     {

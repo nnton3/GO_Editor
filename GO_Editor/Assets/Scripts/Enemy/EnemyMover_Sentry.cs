@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EnemyMover_Sentry : EnemieMover
+public class EnemyMover_Sentry : EnemyMover
 {
     [SerializeField] private float standTime = 1f;
 
